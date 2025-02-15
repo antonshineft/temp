@@ -1,59 +1,122 @@
 
+import { useSearchParams } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tv, Refrigerator, AirVent, ShieldCheck, Package2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShieldCheck, Package2, ExternalLink, Quote as QuoteIcon } from "lucide-react";
 
-const ProductCategory = ({ 
-  icon: Icon, 
-  title, 
-  brands 
-}: { 
-  icon: React.ElementType;
-  title: string;
-  brands: string[];
-}) => (
-  <Card className="hover:shadow-lg transition-shadow">
-    <CardHeader className="text-center pb-2">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="p-4 bg-secondary rounded-full">
-          <Icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
-        </div>
-        <CardTitle>{title}</CardTitle>
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  image: string;
+  description: string;
+  specifications: string[];
+}
+
+const ProductCard = ({ product }: { product: Product }) => (
+  <Card className="hover:shadow-lg transition-shadow group">
+    <CardHeader className="pb-0">
+      <div className="aspect-[4/3] relative mb-4 overflow-hidden rounded-lg">
+        <img
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+        />
       </div>
+      <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
     </CardHeader>
     <CardContent>
-      <div className="pt-4 border-t">
-        <p className="text-sm font-medium text-muted-foreground mb-3">Approved Brands:</p>
-        <ul className="mt-2 space-y-2">
-          {brands.map((brand) => (
-            <li key={brand} className="text-sm flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <span>{brand}</span>
-            </li>
-          ))}
-        </ul>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {product.description}
+          </p>
+          <div className="flex items-center space-x-2 text-sm">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span>{product.brand}</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button className="flex-1" onClick={() => window.location.href = `/products/${product.id}`}>
+            View Details
+            <ExternalLink className="ml-2 h-4 w-4" />
+          </Button>
+          <Button variant="outline" onClick={() => window.location.href = `/quotes/new?product=${product.id}`}>
+            <QuoteIcon className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </CardContent>
   </Card>
 );
 
 const Products = () => {
-  const categories = [
+  const [searchParams] = useSearchParams();
+  const selectedBrand = searchParams.get('brand');
+
+  // This would typically come from an API based on the selected brand
+  const products: Product[] = [
     {
-      icon: Tv,
-      title: "TVs",
-      brands: ["Samsung", "LG", "Philips"],
+      id: "1",
+      name: "Samsung 43\" Crystal UHD Smart TV",
+      brand: "Samsung",
+      category: "TVs",
+      image: "/placeholder.svg",
+      description: "4K UHD Smart TV with Crystal Processor 4K and HDR",
+      specifications: ["43\" Display", "4K Resolution", "Smart TV Features"],
     },
     {
-      icon: AirVent,
-      title: "PTACs/VTACs",
-      brands: ["Amana", "GE"],
+      id: "2",
+      name: "LG 50\" 4K UHD Smart TV",
+      brand: "LG",
+      category: "TVs",
+      image: "/placeholder.svg",
+      description: "4K UHD Smart TV with AI ThinQ and Magic Remote",
+      specifications: ["50\" Display", "4K Resolution", "WebOS"],
     },
     {
-      icon: Refrigerator,
-      title: "Appliances",
-      brands: ["GE", "Kenyon", "Summit", "Magic Chef", "Avanti", "Absocold"],
+      id: "3",
+      name: "Amana PTAC Standard",
+      brand: "Amana",
+      category: "PTACs/VTACs",
+      image: "/placeholder.svg",
+      description: "Standard PTAC unit with digital controls",
+      specifications: ["12,000 BTU", "Digital Controls", "Electric Heat"],
+    },
+    {
+      id: "4",
+      name: "GE Appliances PTAC Premium",
+      brand: "GE",
+      category: "PTACs/VTACs",
+      image: "/placeholder.svg",
+      description: "Premium PTAC unit with remote thermostat",
+      specifications: ["15,000 BTU", "Remote Thermostat", "Heat Pump"],
+    },
+    {
+      id: "5",
+      name: "GE Top-Freezer Refrigerator",
+      brand: "GE",
+      category: "Appliances",
+      image: "/placeholder.svg",
+      description: "Energy Star certified top-freezer refrigerator",
+      specifications: ["18.2 cu. ft.", "Energy Star", "LED Lighting"],
+    },
+    {
+      id: "6",
+      name: "Summit Commercial Refrigerator",
+      brand: "Summit",
+      category: "Appliances",
+      image: "/placeholder.svg",
+      description: "Commercial grade refrigerator for hospitality",
+      specifications: ["24.0 cu. ft.", "Commercial Grade", "Digital Controls"],
     },
   ];
+
+  // Filter products based on selected brand if one is selected
+  const filteredProducts = selectedBrand
+    ? products.filter(p => p.brand === selectedBrand)
+    : products;
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -62,16 +125,18 @@ const Products = () => {
           <Package2 className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold mb-2">Brand Standard Products</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {selectedBrand ? `${selectedBrand} Products` : "All Products"}
+          </h1>
           <p className="text-muted-foreground">
             Browse our catalog of approved products for your property
           </p>
         </div>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
-          <ProductCategory key={category.title} {...category} />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredProducts.map((product) => (
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>
