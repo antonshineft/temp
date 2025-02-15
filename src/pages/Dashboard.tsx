@@ -1,15 +1,90 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShoppingBag, FileText, Quote, Clock } from "lucide-react";
+import { 
+  ShoppingBag, 
+  FileText, 
+  Quote, 
+  Clock, 
+  Building2 
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
+const BrandCard = ({ 
+  name, 
+  logo = "/placeholder.svg",
+  subBrands 
+}: { 
+  name: string;
+  logo?: string;
+  subBrands: string[];
+}) => {
+  const navigate = useNavigate();
+  
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-center h-20">
+          <img
+            src={logo}
+            alt={name}
+            className="h-12 object-contain opacity-80"
+          />
+        </div>
+        <CardTitle className="text-center">{name}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          {subBrands.map((brand) => (
+            <Button
+              key={brand}
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => navigate(`/products?brand=${encodeURIComponent(brand)}`)}
+            >
+              <Building2 className="w-4 h-4 mr-2" />
+              {brand}
+            </Button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const Dashboard = () => {
+  const brands = [
+    {
+      name: "Choice Hotels",
+      subBrands: ["Comfort Inn", "Quality Inn", "EconoLodge", "Clarion"],
+    },
+    {
+      name: "Marriott",
+      subBrands: ["Courtyard", "Residence Inn", "SpringHill Suites"],
+    },
+    {
+      name: "Hilton",
+      subBrands: ["Hampton Inn", "DoubleTree", "Garden Inn"],
+    },
+  ];
+
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
         <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
         <p className="text-muted-foreground">
-          Here's an overview of your procurement activities
+          Select your hotel brand to view approved products
         </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {brands.map((brand) => (
+          <BrandCard
+            key={brand.name}
+            name={brand.name}
+            subBrands={brand.subBrands}
+          />
+        ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -52,30 +127,6 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              No recent activity to display
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm">• View product catalog</p>
-            <p className="text-sm">• Request a quote</p>
-            <p className="text-sm">• Check brand guidelines</p>
           </CardContent>
         </Card>
       </div>
