@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   ShoppingBag, 
@@ -53,38 +52,36 @@ const BrandCard = ({
 };
 
 const Dashboard = () => {
-  const brands = [
-    {
-      name: "Choice Hotels",
-      subBrands: ["Comfort Inn", "Quality Inn", "EconoLodge", "Clarion"],
-    },
-    {
+  const userHotelChain = "Marriott";
+  
+  const brandData = {
+    "Marriott": {
       name: "Marriott",
       subBrands: ["Courtyard", "Residence Inn", "SpringHill Suites"],
     },
-    {
+    "Choice Hotels": {
+      name: "Choice Hotels",
+      subBrands: ["Comfort Inn", "Quality Inn", "EconoLodge", "Clarion"],
+    },
+    "Hilton": {
       name: "Hilton",
       subBrands: ["Hampton Inn", "DoubleTree", "Garden Inn"],
     },
-  ];
+  };
+
+  const selectedBrand = brandData[userHotelChain];
 
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
         <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
         <p className="text-muted-foreground">
-          Select your hotel brand to view approved products
+          Select your {userHotelChain} property type to view approved products
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {brands.map((brand) => (
-          <BrandCard
-            key={brand.name}
-            name={brand.name}
-            subBrands={brand.subBrands}
-          />
-        ))}
+      <div className="max-w-2xl mx-auto">
+        <BrandCard {...selectedBrand} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -8,6 +8,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
 import Guidelines from "./pages/Guidelines";
 import Quotes from "./pages/Quotes";
 import NotFound from "./pages/NotFound";
@@ -31,6 +32,7 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/guidelines" element={<Guidelines />} />
               <Route path="/quotes" element={<Quotes />} />
             </Route>
