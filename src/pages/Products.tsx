@@ -2,12 +2,14 @@
 import { useSearchParams } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Package2, ExternalLink, Quote as QuoteIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ShieldCheck, Package2, ExternalLink, Quote as QuoteIcon, Building2 } from "lucide-react";
 
 interface Product {
   id: string;
   name: string;
   brand: string;
+  subBrand: string;
   category: string;
   image: string;
   description: string;
@@ -24,6 +26,16 @@ const ProductCard = ({ product }: { product: Product }) => (
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
         />
       </div>
+      <div className="flex items-center justify-between mb-2">
+        <Badge variant="secondary" className="flex items-center gap-1">
+          <Building2 className="w-3 h-3" />
+          {product.subBrand}
+        </Badge>
+        <div className="flex items-center space-x-2 text-sm">
+          <ShieldCheck className="w-4 h-4 text-primary" />
+          <span>{product.brand}</span>
+        </div>
+      </div>
       <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
     </CardHeader>
     <CardContent>
@@ -32,10 +44,6 @@ const ProductCard = ({ product }: { product: Product }) => (
           <p className="text-sm text-muted-foreground line-clamp-2">
             {product.description}
           </p>
-          <div className="flex items-center space-x-2 text-sm">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span>{product.brand}</span>
-          </div>
         </div>
         <div className="flex gap-2">
           <Button className="flex-1" onClick={() => window.location.href = `/products/${product.id}`}>
@@ -61,7 +69,8 @@ const Products = () => {
     {
       id: "1",
       name: "Samsung 43\" Crystal UHD Smart TV",
-      brand: "Samsung",
+      brand: "Marriott",
+      subBrand: "Courtyard",
       category: "TVs",
       image: "/placeholder.svg",
       description: "4K UHD Smart TV with Crystal Processor 4K and HDR",
@@ -70,7 +79,8 @@ const Products = () => {
     {
       id: "2",
       name: "LG 50\" 4K UHD Smart TV",
-      brand: "LG",
+      brand: "Marriott",
+      subBrand: "Residence Inn",
       category: "TVs",
       image: "/placeholder.svg",
       description: "4K UHD Smart TV with AI ThinQ and Magic Remote",
@@ -79,7 +89,8 @@ const Products = () => {
     {
       id: "3",
       name: "Amana PTAC Standard",
-      brand: "Amana",
+      brand: "Marriott",
+      subBrand: "SpringHill Suites",
       category: "PTACs/VTACs",
       image: "/placeholder.svg",
       description: "Standard PTAC unit with digital controls",
@@ -88,7 +99,8 @@ const Products = () => {
     {
       id: "4",
       name: "GE Appliances PTAC Premium",
-      brand: "GE",
+      brand: "Marriott",
+      subBrand: "Courtyard",
       category: "PTACs/VTACs",
       image: "/placeholder.svg",
       description: "Premium PTAC unit with remote thermostat",
@@ -97,7 +109,8 @@ const Products = () => {
     {
       id: "5",
       name: "GE Top-Freezer Refrigerator",
-      brand: "GE",
+      brand: "Marriott",
+      subBrand: "Residence Inn",
       category: "Appliances",
       image: "/placeholder.svg",
       description: "Energy Star certified top-freezer refrigerator",
@@ -106,11 +119,42 @@ const Products = () => {
     {
       id: "6",
       name: "Summit Commercial Refrigerator",
-      brand: "Summit",
+      brand: "Marriott",
+      subBrand: "SpringHill Suites",
       category: "Appliances",
       image: "/placeholder.svg",
       description: "Commercial grade refrigerator for hospitality",
       specifications: ["24.0 cu. ft.", "Commercial Grade", "Digital Controls"],
+    },
+    {
+      id: "7",
+      name: "Whirlpool Stackable Washer",
+      brand: "Marriott",
+      subBrand: "Residence Inn",
+      category: "Appliances",
+      image: "/placeholder.svg",
+      description: "Front-loading stackable washer for extended stay",
+      specifications: ["4.5 cu. ft.", "Energy Star", "Steam Clean"],
+    },
+    {
+      id: "8",
+      name: "Philips Commercial Coffee Maker",
+      brand: "Marriott",
+      subBrand: "Courtyard",
+      category: "Appliances",
+      image: "/placeholder.svg",
+      description: "Commercial grade coffee maker for lobby service",
+      specifications: ["12-cup capacity", "Auto-brewing", "Self-cleaning"],
+    },
+    {
+      id: "9",
+      name: "Sony Professional Display",
+      brand: "Marriott",
+      subBrand: "SpringHill Suites",
+      category: "TVs",
+      image: "/placeholder.svg",
+      description: "Professional-grade display for hospitality",
+      specifications: ["55\" Display", "4K Resolution", "Pro Mode"],
     },
   ];
 
@@ -118,7 +162,7 @@ const Products = () => {
 
   // Filter products based on selected brand and category
   const filteredProducts = products.filter(p => 
-    (!selectedBrand || p.brand === selectedBrand) &&
+    (!selectedBrand || p.subBrand === selectedBrand) &&
     (!selectedCategory || p.category === selectedCategory)
   );
 
