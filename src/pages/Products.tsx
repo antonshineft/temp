@@ -54,8 +54,9 @@ const ProductCard = ({ product }: { product: Product }) => (
 const Products = () => {
   const [searchParams] = useSearchParams();
   const selectedBrand = searchParams.get('brand');
+  const selectedCategory = searchParams.get('category');
 
-  // This would typically come from an API based on the selected brand
+  // This would typically come from your backend
   const products: Product[] = [
     {
       id: "1",
@@ -113,14 +114,17 @@ const Products = () => {
     },
   ];
 
-  // Filter products based on selected brand if one is selected
-  const filteredProducts = selectedBrand
-    ? products.filter(p => p.brand === selectedBrand)
-    : products;
+  const categories = [...new Set(products.map(p => p.category))];
+
+  // Filter products based on selected brand and category
+  const filteredProducts = products.filter(p => 
+    (!selectedBrand || p.brand === selectedBrand) &&
+    (!selectedCategory || p.category === selectedCategory)
+  );
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div className="flex items-center space-x-4 mb-8">
+      <div className="flex items-center space-x-4">
         <div className="p-3 bg-primary/10 rounded-full">
           <Package2 className="w-6 h-6 text-primary" />
         </div>
@@ -134,6 +138,32 @@ const Products = () => {
         </div>
       </div>
       
+      <div className="flex gap-2 flex-wrap">
+        <Button
+          variant={!selectedCategory ? "default" : "outline"}
+          onClick={() => {
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete('category');
+            window.history.pushState({}, '', `?${newParams}`);
+          }}
+        >
+          All Categories
+        </Button>
+        {categories.map((category) => (
+          <Button
+            key={category}
+            variant={selectedCategory === category ? "default" : "outline"}
+            onClick={() => {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.set('category', category);
+              window.history.pushState({}, '', `?${newParams}`);
+            }}
+          >
+            {category}
+          </Button>
+        ))}
+      </div>
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
