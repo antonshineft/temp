@@ -151,6 +151,17 @@ const Index = () => {
             </Card>
           ))}
         </div>
+
+        <div className="text-center mt-12">
+          <Button
+            size="lg"
+            onClick={() => navigate("/about")}
+            variant="outline"
+            className="text-lg"
+          >
+            Learn More About Us
+          </Button>
+        </div>
       </div>
 
       {/* Footer */}
