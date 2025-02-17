@@ -1,8 +1,10 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Building2, Users2, Wrench, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const About = () => {
   const navigate = useNavigate();
@@ -89,6 +91,67 @@ const About = () => {
             <p className="text-lg text-center font-medium">
               By providing clarity, convenience, and confidence in the technology selection process, HotelBrandPortal.com helps hotel professionals stay compliant, make informed decisions, and keep their properties running seamlessly.
             </p>
+          </section>
+
+          {/* Login/Register Section */}
+          <section className="bg-card rounded-lg p-8 shadow-lg">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Login Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sign In</CardTitle>
+                  <CardDescription>
+                    Access your account to view approved products
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form className="space-y-4" onSubmit={(e) => {
+                    e.preventDefault();
+                    navigate("/dashboard");
+                  }}>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email">Email</Label>
+                      <Input id="login-email" type="email" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password">Password</Label>
+                      <Input id="login-password" type="password" required />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Sign In
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Register Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create Account</CardTitle>
+                  <CardDescription>
+                    Register for free access to brand standards
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form className="space-y-4" onSubmit={(e) => {
+                    e.preventDefault();
+                    navigate("/register");
+                  }}>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email">Work Email</Label>
+                      <Input id="register-email" type="email" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-company">Company Name</Label>
+                      <Input id="register-company" required />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Continue Registration
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
           </section>
         </div>
       </div>
