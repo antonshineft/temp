@@ -1,5 +1,23 @@
 # Wellness Whizz — standalone version (no Webflow, no Make.com)
 
+## Deploy in one click
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/antonshineft/temp/tree/main/wellness-whizz)
+
+1. Click the button (or open the link) and sign in to Cloudflare; a free account is enough.
+2. Cloudflare copies this project into your own GitHub account and shows a setup page. Keep the defaults.
+   Under **Variables and secrets**, add a secret named `OPENAI_API_KEY` with your OpenAI key.
+3. Click **Create and deploy**. After a minute or two the site is live on a `*.workers.dev` address.
+
+That is all: the database is created automatically, and on the first visit the Worker creates its tables and loads
+the Webflow content that is bundled in `data/` (98 supplements with their iHerb links, and the past quiz results so
+old `/result/...` links keep working). Every later push to the copied repository redeploys the site.
+
+If you forgot the key, the quiz shows "The advisor is not configured yet". Add the secret in the Cloudflare dashboard
+under your Worker → **Settings → Variables and Secrets**, then it works without a redeploy.
+
+To use your own domain, open the Worker → **Settings → Domains & Routes → Add → Custom domain**.
+
 The AI Supplement Advisor site, rebuilt to run on **Cloudflare** with a small backend that replaces the Webflow forms +
 Make.com + Webflow CMS chain:
 
@@ -33,14 +51,15 @@ does not.
 cd wellness-whizz
 npm install
 cp .dev.vars.example .dev.vars          # DEV_FAKE_AI=true lets you test without an OpenAI key
-npm run db:migrate:local                # creates the local D1 database
-npm run db:seed:local                   # 8 starter supplements (optional)
 npm run dev                             # http://localhost:8787
 ```
 
+The first request creates the local database tables and loads `data/*.json`. `npm run db:seed:local` adds eight
+generic sample supplements if you want more test content.
+
 `npm run typecheck` runs the TypeScript compiler.
 
-## Deploy to Cloudflare
+## Deploy from the command line (alternative to the button)
 
 You need a free Cloudflare account and Node.js 20+.
 
@@ -48,22 +67,12 @@ You need a free Cloudflare account and Node.js 20+.
 cd wellness-whizz
 npm install
 npx wrangler login
-
-# 1. Create the database and copy the printed database_id into wrangler.jsonc
-npx wrangler d1 create wellness-whizz
-
-# 2. Create the tables and (optionally) the starter content
-npm run db:migrate:remote
-npm run db:seed:remote
-
-# 3. Store the OpenAI key as a secret (never commit it)
-npx wrangler secret put OPENAI_API_KEY
-
-# 4. Deploy
-npm run deploy
+npx wrangler secret put OPENAI_API_KEY   # paste the key when asked
+npm run deploy                           # creates the D1 database on first run
 ```
 
-Wrangler prints the `*.workers.dev` URL. To use your own domain (for example `aiww.io`), open the Worker in the
+Wrangler prints the `*.workers.dev` URL. Tables and bundled content are created on the first visit; `npm run
+db:migrate:remote` is only needed if you prefer explicit migrations. To use your own domain (for example `aiww.io`), open the Worker in the
 Cloudflare dashboard → **Settings → Domains & Routes → Add → Custom domain**. The DNS records are created for you when
 the domain is on Cloudflare.
 
@@ -113,6 +122,16 @@ Also set a monthly spend limit on your OpenAI account; the rate limits above bou
 
 ## Bringing over your Webflow CMS content
 
+The current Webflow content is already bundled in `data/supplements.json` and `data/results.json` and loads
+automatically into an empty database. To refresh it after changes in Webflow, export the collections again and run
+
+```sh
+node scripts/build-data.mjs ~/Downloads/Supplements.csv ~/Downloads/Results.csv
+```
+
+then commit `data/` and push (a new database picks it up; an existing one keeps its rows, so for an existing site use
+the SQL importers below, which update rows in place).
+
 Export the **Supplements** collection from Webflow as CSV, then:
 
 ```sh
@@ -150,9 +169,11 @@ src/pipeline.ts    Quiz pipeline (the former Make.com scenario)
 src/openai.ts      OpenAI calls, prompts and JSON schemas
 src/db.ts          D1 queries
 src/render/        HTML templates reusing the Webflow markup and classes
+src/bootstrap.ts   Creates tables and loads data/*.json on first start
+data/              Webflow CMS content bundled into the Worker (built by scripts/build-data.mjs)
 migrations/        D1 schema
-seed.sql           Starter supplements (generated from scripts/seed-data.mjs)
-scripts/           Seed builder and Webflow CSV importers (Supplements, Results)
+seed.sql           Generic sample supplements (generated from scripts/seed-data.mjs)
+scripts/           Data bundler, seed builder and Webflow CSV importers (Supplements, Results)
 ```
 
 ## Costs

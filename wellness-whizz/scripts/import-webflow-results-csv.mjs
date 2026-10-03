@@ -7,60 +7,34 @@
  *   npx wrangler d1 execute wellness-whizz --remote --file=results.sql
  *
  * Run it AFTER importing the Supplements collection: each "Supplement N" column holds a supplement slug, which is
- * resolved against the supplements table. Rows whose supplements are missing simply get fewer cards.
+ * resolved against the supplements table (the Webflow slug, or the same slug without its random suffix).
  */
 import { readFileSync } from 'node:fs';
-import { parseCsv, sql } from './lib.mjs';
+import { sql } from './lib.mjs';
+import { resultsFromCsv } from './webflow-mapping.mjs';
 
 const file = process.argv[2];
 if (!file) {
   console.error('usage: node scripts/import-webflow-results-csv.mjs <Results.csv> > results.sql');
   process.exit(1);
 }
-const rows = parseCsv(readFileSync(file, 'utf8'));
+const { sessions, skipped } = resultsFromCsv(readFileSync(file, 'utf8'));
 const statements = [];
-let sessions = 0;
 let cards = 0;
-let skipped = 0;
-const slugs = new Map();
-
-for (const row of rows) {
-  if (/^true$/i.test(row['Archived'] ?? '') || /^true$/i.test(row['Draft'] ?? '')) {
-    skipped++;
-    continue;
-  }
-  const id = String(row['User Session'] || row['Slug'] || row['Name'] || '').trim();
-  if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
-    skipped++;
-    continue;
-  }
-  const created = toSqlDate(row['Created On']);
+for (const s of sessions) {
   statements.push(
     `INSERT OR IGNORE INTO sessions (id, sex, age, activity, diet, goal, status, created_at, completed_at) ` +
-      `VALUES (${sql(id)}, '', '', '', '', '', 'ready', ${sql(created)}, ${sql(created)});`,
+      `VALUES (${sql(s.id)}, '', '', '', '', '', 'ready', ${sql(s.created_at)}, ${sql(s.created_at)});`,
   );
-  sessions++;
-  for (let i = 1; i <= 5; i++) {
-    const slug = String(row[`Supplement ${i}`] || row[`Supplements ${i}`] || '').trim();
-    if (!slug) continue;
-    const reason = String(row[`Dosage ${i}`] || row[`Reason ${i}`] || '').trim();
-    slugs.set(slug, (slugs.get(slug) ?? 0) + 1);
-    // Match the Webflow slug, or the same slug without its random suffix if the row was created with a plain slug.
-    const bare = slug.replace(/-[0-9a-f]{5}$/, '');
+  for (const card of s.cards) {
+    const bare = card.slug.replace(/-[0-9a-f]{5}$/, '');
     statements.push(
       `INSERT OR IGNORE INTO session_supplements (session_id, position, supplement_id, reason) ` +
-        `SELECT ${sql(id)}, ${i}, id, ${sql(reason)} FROM supplements WHERE slug IN (${sql(slug)}, ${sql(bare)}) ` +
-        `ORDER BY CASE WHEN slug = ${sql(slug)} THEN 0 ELSE 1 END LIMIT 1;`,
+        `SELECT ${sql(s.id)}, ${card.position}, id, ${sql(card.reason)} FROM supplements WHERE slug IN (${sql(card.slug)}, ${sql(bare)}) ` +
+        `ORDER BY CASE WHEN slug = ${sql(card.slug)} THEN 0 ELSE 1 END LIMIT 1;`,
     );
     cards++;
   }
 }
-
 process.stdout.write(`-- Imported from ${file} by scripts/import-webflow-results-csv.mjs\n${statements.join('\n')}\n`);
-console.error(`Wrote ${sessions} sessions with ${cards} cards (${skipped} rows skipped); ${slugs.size} distinct supplement slugs referenced.`);
-
-function toSqlDate(value) {
-  const d = new Date(String(value ?? ''));
-  const iso = Number.isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
-  return iso.slice(0, 19).replace('T', ' ');
-}
+console.error(`Wrote ${sessions.length} sessions with ${cards} cards (${skipped} rows skipped).`);

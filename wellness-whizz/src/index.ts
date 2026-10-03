@@ -14,6 +14,7 @@ import {
   countRecentSessions, createSession, getSession, getSessionResults, getSupplementBySlug, listSupplements, markSession,
   resolveSupplementSlug, type QuizProfile,
 } from './db';
+import { ensureDatabase } from './bootstrap';
 import { runQuizPipeline } from './pipeline';
 import { fetchAsset, renderHome } from './render/home';
 import { renderFailedPage, renderPendingPage, renderResultPage } from './render/result';
@@ -45,8 +46,9 @@ const PENDING_TIMEOUT_MS = 4 * 60 * 1000;
 const htmlHeaders = (cacheControl: string) => ({ 'content-type': 'text/html; charset=utf-8', 'cache-control': cacheControl });
 const curatedOnly = (env: Bindings) => env.LIST_AI_SUPPLEMENTS === 'false';
 
-// Same security headers as public/_headers applies to the static files.
+// Same security headers as public/_headers applies to the static files; the database is prepared on first use.
 app.use('*', async (c, next) => {
+  await ensureDatabase(c.env.DB);
   await next();
   const res = new Response(c.res.body, c.res);
   res.headers.set('x-content-type-options', 'nosniff');
@@ -104,11 +106,14 @@ app.post('/api/quiz', async (c) => {
   const isJson = contentType.includes('application/json');
   const body = isJson ? await readJson(c.req.raw) : await readForm(c.req.raw);
   const wantsHtml = !isJson && (c.req.header('accept') ?? '').includes('text/html');
-  const reject = (status: 400 | 429, message: string) =>
+  const reject = (status: 400 | 429 | 503, message: string) =>
     wantsHtml ? c.body(message, status, { 'content-type': 'text/plain; charset=utf-8' }) : c.json({ error: message }, status);
 
   const validation = validateProfile(body);
   if (!validation.ok) return reject(400, validation.error);
+  if (!c.env.OPENAI_API_KEY && c.env.DEV_FAKE_AI !== 'true') {
+    return reject(503, 'The advisor is not configured yet: the site owner must add the OPENAI_API_KEY secret in Cloudflare.');
+  }
 
   const ip = c.req.header('cf-connecting-ip') ?? '';
   if (c.env.TURNSTILE_SECRET_KEY) {
