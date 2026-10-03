@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS supplements (
   why_consider TEXT NOT NULL DEFAULT '',
   holistic_html TEXT NOT NULL DEFAULT '',
   studies_html TEXT NOT NULL DEFAULT '',
-  products_json TEXT NOT NULL DEFAULT '[]',        -- [{"name","brand","url"}]
+  products_json TEXT NOT NULL DEFAULT '[]',        -- [{"name","brand","url","image"}]
+  source TEXT NOT NULL DEFAULT 'cms',              -- cms (imported/seeded) | ai (created by the quiz pipeline)
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

@@ -1,5 +1,8 @@
-/* Wellness quiz: submits to /api/quiz (our Worker) instead of Webflow forms + Make.com, then opens the result page. */
+/* Wellness quiz: submits to /api/quiz (our Worker) instead of Webflow forms + Make.com, then opens the result page.
+   If the Worker is configured with a Cloudflare Turnstile site key, the widget is rendered before the submit button. */
 (function () {
+  var POLL_ATTEMPTS = 80; // x 3 s = 4 min, matches the server's pending timeout
+
   function randomId() {
     var bytes = new Uint8Array(12);
     if (window.crypto && window.crypto.getRandomValues) {
@@ -37,7 +40,53 @@
     var submitBtn = form.querySelector('input[type="submit"]');
     var submitLabel = submitBtn ? submitBtn.value : '';
     var hidden = form.querySelector('input[name="sessionID"]');
-    if (hidden) hidden.value = randomId();
+    var turnstile = { enabled: false, token: '', widgetId: null };
+
+    function resetForm() {
+      if (hidden) hidden.value = randomId(); // every attempt is a new session
+      if (done) done.style.display = 'none';
+      form.style.display = '';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.value = submitLabel;
+      }
+      if (turnstile.enabled && window.turnstile && turnstile.widgetId !== null) {
+        turnstile.token = '';
+        window.turnstile.reset(turnstile.widgetId);
+      }
+    }
+    resetForm();
+
+    // Coming back with the browser's Back button restores the page from cache, frozen on the waiting screen.
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted) resetForm();
+    });
+
+    // Optional bot protection: ask the Worker whether Turnstile is configured and render the widget if so.
+    fetch('/api/config', { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (config) {
+        if (!config || !config.turnstileSiteKey) return;
+        turnstile.enabled = true;
+        var holder = document.createElement('div');
+        holder.className = 'turnstile-holder';
+        holder.style.margin = '12px auto';
+        submitBtn.parentNode.insertBefore(holder, submitBtn);
+        window.__wwTurnstileReady = function () {
+          turnstile.widgetId = window.turnstile.render(holder, {
+            sitekey: config.turnstileSiteKey,
+            theme: 'dark',
+            callback: function (token) { turnstile.token = token; },
+            'expired-callback': function () { turnstile.token = ''; },
+            'error-callback': function () { turnstile.token = ''; }
+          });
+        };
+        var script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__wwTurnstileReady';
+        script.async = true;
+        document.head.appendChild(script);
+      })
+      .catch(function () { /* no config endpoint: continue without Turnstile */ });
 
     function showWaiting() {
       if (submitBtn) {
@@ -51,20 +100,14 @@
     }
 
     function showError(message) {
-      if (done) done.style.display = 'none';
-      form.style.display = '';
+      resetForm();
       if (fail) fail.style.display = 'block';
-      if (failText && message) failText.textContent = message;
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.value = submitLabel;
-      }
-      if (hidden) hidden.value = randomId(); // a retry is a new session
+      if (failText) failText.textContent = message || 'Oops! Something went wrong while submitting the form.';
     }
 
-    // Used only when the first request did not come back (network drop, proxy timeout): the Worker keeps working.
+    // Used only when the first request did not come back (network drop, proxy timeout).
     function pollStatus(id, attempt) {
-      if (attempt > 60) return showError('This is taking longer than expected. Please try again.');
+      if (attempt > POLL_ATTEMPTS) return showError('This is taking longer than expected. Please try again.');
       setTimeout(function () {
         fetch('/api/session/' + encodeURIComponent(id), { headers: { accept: 'application/json' } })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -83,8 +126,14 @@
         if (typeof form.reportValidity === 'function') form.reportValidity();
         return;
       }
+      if (turnstile.enabled && !turnstile.token) {
+        if (fail) fail.style.display = 'block';
+        if (failText) failText.textContent = 'Please complete the verification above, then submit again.';
+        return;
+      }
       var payload = {};
       new FormData(form).forEach(function (value, key) { payload[key] = value; });
+      if (turnstile.enabled) payload['cf-turnstile-response'] = turnstile.token;
       var sessionId = payload.sessionID;
       showWaiting();
 

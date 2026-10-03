@@ -5,11 +5,15 @@
 import { listSupplements, randomSupplements, type Supplement } from '../db';
 import { exploreItem, homeCard } from './partials';
 
-export async function renderHome(env: { DB: D1Database; ASSETS: Fetcher }, request: Request): Promise<Response> {
+export async function renderHome(
+  env: { DB: D1Database; ASSETS: Fetcher },
+  request: Request,
+  curatedOnly = false,
+): Promise<Response> {
   const [assetResponse, slides, explore] = await Promise.all([
     fetchAsset(env.ASSETS, request, '/'),
-    randomSupplements(env.DB, 6),
-    listSupplements(env.DB, 200),
+    randomSupplements(env.DB, 6, curatedOnly),
+    listSupplements(env.DB, 200, curatedOnly),
   ]);
   if (!assetResponse.ok) return assetResponse;
 

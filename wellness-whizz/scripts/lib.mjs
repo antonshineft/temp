@@ -35,6 +35,32 @@ export function slugify(name) {
   return normalizeNameKey(name).replace(/\s+/g, '-').slice(0, 80).replace(/-+$/g, '');
 }
 
+const RICH_TEXT_TAGS = new Set(['p', 'br', 'ol', 'ul', 'li', 'strong', 'em', 'b', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'a', 'div', 'span']);
+
+/** Keep only harmless formatting tags from CMS rich text; links keep an http(s) href only. */
+export function sanitizeRichText(html) {
+  return String(html ?? '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<(script|style|iframe|object|embed|svg|math|template)\b[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g, (match, tag, attrs) => {
+      const name = tag.toLowerCase();
+      if (!RICH_TEXT_TAGS.has(name)) return '';
+      if (match.startsWith('</')) return `</${name}>`;
+      if (name !== 'a') return `<${name}>`;
+      const href = /href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(attrs);
+      const url = safeUrl(href ? (href[1] ?? href[2] ?? href[3] ?? '') : '');
+      return url ? `<a href="${url.replace(/"/g, '&quot;')}" target="_blank" rel="noopener nofollow">` : '<a>';
+    })
+    .replace(/<p>(?:\s|&nbsp;|\u200d|\u200b)*<\/p>/g, '')
+    .trim();
+}
+
+/** Only absolute http(s) URLs are allowed into href attributes. */
+export function safeUrl(value) {
+  const url = String(value ?? '').trim();
+  return /^https?:\/\/[^\s"'<>]+$/i.test(url) ? url : '';
+}
+
 export function productUrl(query, template = 'https://www.amazon.com/s?k={query}') {
   return template.replace('{query}', encodeURIComponent(query));
 }
@@ -86,8 +112,14 @@ export function supplementInsert(rec, mode = 'ignore') {
     rec.why_consider || '', rec.holistic_html || '', rec.studies_html || '', JSON.stringify(rec.products || []),
   ];
   if (mode !== 'upsert') return `INSERT OR IGNORE INTO supplements (${cols.join(', ')})\nVALUES (${vals.map(sql).join(', ')});`;
-  const updates = cols.filter((c) => c !== 'name_key').map((c) => `${c} = excluded.${c}`).join(', ');
-  return `INSERT INTO supplements (${cols.join(', ')})\nVALUES (${vals.map(sql).join(', ')})\nON CONFLICT(name_key) DO UPDATE SET ${updates};`;
+  // Existing slugs are never rewritten (old /supplement/... links must keep working); a row is matched either by
+  // its normalised name or by its slug.
+  const byName = cols.filter((c) => c !== 'name_key' && c !== 'slug').map((c) => `${c} = excluded.${c}`).join(', ');
+  const bySlug = cols.filter((c) => c !== 'slug').map((c) => `${c} = excluded.${c}`).join(', ');
+  return (
+    `INSERT INTO supplements (${cols.join(', ')})\nVALUES (${vals.map(sql).join(', ')})\n` +
+    `ON CONFLICT(name_key) DO UPDATE SET ${byName}\nON CONFLICT(slug) DO UPDATE SET ${bySlug};`
+  );
 }
 
 // ---------- minimal CSV parser (RFC 4180: quotes, escaped quotes, newlines inside quotes) ----------

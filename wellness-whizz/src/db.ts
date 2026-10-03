@@ -4,6 +4,7 @@ export type FormType = 'capsule' | 'softgel' | 'small_softgel' | 'tablet' | 'pow
 export type FdaStatus = 'approved' | 'probably_ok' | 'not_approved';
 export type SafetyStatus = 'safe' | 'ok' | 'not_safe' | 'prescription';
 export type SessionStatus = 'pending' | 'ready' | 'failed';
+export type SupplementSource = 'cms' | 'ai';
 
 export const FORM_TYPES: readonly FormType[] = ['capsule', 'softgel', 'small_softgel', 'tablet', 'powder', 'gummy', 'bar', 'drops'];
 export const FDA_STATUSES: readonly FdaStatus[] = ['approved', 'probably_ok', 'not_approved'];
@@ -40,10 +41,11 @@ export interface Supplement {
   holistic_html: string;
   studies_html: string;
   products: Product[];
+  source: SupplementSource;
   created_at: string;
 }
 
-export type SupplementInput = Omit<Supplement, 'id' | 'slug' | 'created_at'>;
+export type SupplementInput = Omit<Supplement, 'id' | 'slug' | 'created_at' | 'source'>;
 
 export interface QuizProfile {
   sex: string;
@@ -133,19 +135,22 @@ function rowToSupplement(row: SupplementRow): Supplement {
     effectivity: clampRating(rest.effectivity),
     safety: clampRating(rest.safety),
     products: parseProducts(products_json),
+    source: rest.source === 'ai' ? 'ai' : 'cms',
   };
 }
 
 const SUPPLEMENT_COLUMNS =
   'id, slug, name, name_key, category, form_type, fda_status, safety_status, effectivity, safety, summary, ' +
   'benefits_html, contraindications_html, enhancing_html, interactions_html, why_consider, holistic_html, ' +
-  'studies_html, products_json, created_at';
+  'studies_html, products_json, source, created_at';
 
 // ---------- supplements ----------
 
-export async function listSupplements(db: D1Database, limit = 200): Promise<Supplement[]> {
+/** @param curatedOnly leave out supplements the AI pipeline created (LIST_AI_SUPPLEMENTS=false). */
+export async function listSupplements(db: D1Database, limit = 200, curatedOnly = false): Promise<Supplement[]> {
+  const where = curatedOnly ? "WHERE source != 'ai'" : '';
   const { results } = await db
-    .prepare(`SELECT ${SUPPLEMENT_COLUMNS} FROM supplements ORDER BY name COLLATE NOCASE LIMIT ?`)
+    .prepare(`SELECT ${SUPPLEMENT_COLUMNS} FROM supplements ${where} ORDER BY name COLLATE NOCASE LIMIT ?`)
     .bind(limit)
     .all<SupplementRow>();
   return results.map(rowToSupplement);
@@ -159,9 +164,10 @@ export async function listSupplementNames(db: D1Database, limit = 300): Promise<
   return results.map((r) => r.name);
 }
 
-export async function randomSupplements(db: D1Database, n: number): Promise<Supplement[]> {
+export async function randomSupplements(db: D1Database, n: number, curatedOnly = false): Promise<Supplement[]> {
+  const where = curatedOnly ? "WHERE source != 'ai'" : '';
   const { results } = await db
-    .prepare(`SELECT ${SUPPLEMENT_COLUMNS} FROM supplements ORDER BY RANDOM() LIMIT ?`)
+    .prepare(`SELECT ${SUPPLEMENT_COLUMNS} FROM supplements ${where} ORDER BY RANDOM() LIMIT ?`)
     .bind(n)
     .all<SupplementRow>();
   return results.map(rowToSupplement);
@@ -172,15 +178,26 @@ export async function getSupplementBySlug(db: D1Database, slug: string): Promise
   return row ? rowToSupplement(row) : null;
 }
 
-/** Webflow slugs end in a random suffix (e.g. "zinc-fe1df"); resolve a bare "zinc" to the shortest matching slug. */
-export async function findSupplementSlugByPrefix(db: D1Database, prefix: string): Promise<string | null> {
-  const clean = slugify(prefix);
-  if (!clean) return null;
-  const row = await db
-    .prepare('SELECT slug FROM supplements WHERE slug LIKE ? ESCAPE \'\\\' ORDER BY length(slug) LIMIT 1')
-    .bind(`${clean.replace(/[\\%_]/g, (m) => '\\' + m)}-%`)
-    .first<{ slug: string }>();
-  return row?.slug ?? null;
+const WEBFLOW_SUFFIX = /-[0-9a-f]{5}$/;
+
+/**
+ * Webflow slugs carry a random 5-hex suffix ("zinc-fe1df"). Resolve "zinc" to "zinc-fe1df" when exactly one such
+ * row exists, and "zinc-fe1df" to a plain "zinc" row. Anything else is not guessed.
+ */
+export async function resolveSupplementSlug(db: D1Database, requested: string): Promise<string | null> {
+  const clean = requested.toLowerCase();
+  if (!/^[a-z0-9-]{1,100}$/.test(clean)) return null;
+  const { results } = await db
+    .prepare('SELECT slug FROM supplements WHERE slug GLOB ? LIMIT 2')
+    .bind(`${clean}-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]`)
+    .all<{ slug: string }>();
+  if (results.length === 1) return results[0].slug;
+  if (WEBFLOW_SUFFIX.test(clean)) {
+    const bare = clean.replace(WEBFLOW_SUFFIX, '');
+    const row = await db.prepare('SELECT slug FROM supplements WHERE slug = ?').bind(bare).first<{ slug: string }>();
+    if (row) return row.slug;
+  }
+  return null;
 }
 
 export async function getSupplementByNameKey(db: D1Database, key: string): Promise<Supplement | null> {
@@ -202,7 +219,7 @@ export async function getSupplementsByNameKeys(db: D1Database, keys: string[]): 
 }
 
 /** Insert a supplement. Safe to call concurrently: if the name already exists, the existing row is returned. */
-export async function insertSupplement(db: D1Database, input: SupplementInput): Promise<Supplement> {
+export async function insertSupplement(db: D1Database, input: SupplementInput, source: SupplementSource = 'cms'): Promise<Supplement> {
   const nameKey = normalizeNameKey(input.name);
   if (!nameKey) throw new Error('Supplement name is empty');
   const existing = await getSupplementByNameKey(db, nameKey);
@@ -217,8 +234,8 @@ export async function insertSupplement(db: D1Database, input: SupplementInput): 
       .prepare(
         `INSERT INTO supplements (slug, name, name_key, category, form_type, fda_status, safety_status, effectivity, safety,
            summary, benefits_html, contraindications_html, enhancing_html, interactions_html, why_consider, holistic_html,
-           studies_html, products_json)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           studies_html, products_json, source)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
         slug,
@@ -239,6 +256,7 @@ export async function insertSupplement(db: D1Database, input: SupplementInput): 
         input.holistic_html,
         input.studies_html,
         JSON.stringify(input.products ?? []),
+        source,
       )
       .run();
   } catch (err) {
@@ -254,11 +272,13 @@ export async function insertSupplement(db: D1Database, input: SupplementInput): 
 
 // ---------- sessions ----------
 
-export async function createSession(db: D1Database, id: string, profile: QuizProfile, ipHash: string | null): Promise<void> {
-  await db
-    .prepare('INSERT INTO sessions (id, sex, age, activity, diet, goal, status, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+/** Returns false when a session with this id already exists (duplicate submit). */
+export async function createSession(db: D1Database, id: string, profile: QuizProfile, ipHash: string | null): Promise<boolean> {
+  const result = await db
+    .prepare('INSERT OR IGNORE INTO sessions (id, sex, age, activity, diet, goal, status, ip_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
     .bind(id, profile.sex, profile.age, profile.activity, profile.diet, profile.goal, 'pending', ipHash)
     .run();
+  return (result.meta.changes ?? 0) > 0;
 }
 
 export async function getSession(db: D1Database, id: string): Promise<Session | null> {
@@ -295,7 +315,7 @@ export async function getSessionResults(db: D1Database, sessionId: string): Prom
     .prepare(
       `SELECT ss.position, ss.reason, s.id, s.slug, s.name, s.name_key, s.category, s.form_type, s.fda_status, s.safety_status,
               s.effectivity, s.safety, s.summary, s.benefits_html, s.contraindications_html, s.enhancing_html,
-              s.interactions_html, s.why_consider, s.holistic_html, s.studies_html, s.products_json, s.created_at
+              s.interactions_html, s.why_consider, s.holistic_html, s.studies_html, s.products_json, s.source, s.created_at
        FROM session_supplements ss JOIN supplements s ON s.id = ss.supplement_id
        WHERE ss.session_id = ? ORDER BY ss.position`,
     )
@@ -307,10 +327,16 @@ export async function getSessionResults(db: D1Database, sessionId: string): Prom
   });
 }
 
-export async function countRecentSessions(db: D1Database, ipHash: string, hours = 1): Promise<number> {
-  const row = await db
-    .prepare(`SELECT COUNT(*) AS n FROM sessions WHERE ip_hash = ? AND created_at >= datetime('now', ?)`)
-    .bind(ipHash, `-${hours} hours`)
-    .first<{ n: number }>();
+/** Sessions started in the last `hours` hours, for one IP hash or (null) for everyone. */
+export async function countRecentSessions(db: D1Database, ipHash: string | null, hours = 1): Promise<number> {
+  const row = ipHash
+    ? await db
+        .prepare(`SELECT COUNT(*) AS n FROM sessions WHERE ip_hash = ? AND created_at >= datetime('now', ?)`)
+        .bind(ipHash, `-${hours} hours`)
+        .first<{ n: number }>()
+    : await db
+        .prepare(`SELECT COUNT(*) AS n FROM sessions WHERE created_at >= datetime('now', ?)`)
+        .bind(`-${hours} hours`)
+        .first<{ n: number }>();
   return row?.n ?? 0;
 }

@@ -93,7 +93,7 @@ function productCards(sup: Supplement): string {
   const names = products.map((p) => `<div class="text-41">${escapeHtml(p.name)}</div>`).join('\n            ');
   const cards = products
     .map((p, i) => {
-      const link = p.url ? escapeHtml(p.url) : '#';
+      const link = /^https?:\/\//i.test(p.url) ? escapeHtml(p.url) : '#';
       const image = p.image
         ? `<img src="${escapeHtml(p.image)}" loading="lazy" width="306" height="305" alt="${escapeHtml(p.name)}" class="convertedimage14-4">`
         : cardImage(sup, 'width="306" height="305" class="convertedimage14-4"');

@@ -45,9 +45,12 @@ for (const row of rows) {
     if (!slug) continue;
     const reason = String(row[`Dosage ${i}`] || row[`Reason ${i}`] || '').trim();
     slugs.set(slug, (slugs.get(slug) ?? 0) + 1);
+    // Match the Webflow slug, or the same slug without its random suffix if the row was created with a plain slug.
+    const bare = slug.replace(/-[0-9a-f]{5}$/, '');
     statements.push(
       `INSERT OR IGNORE INTO session_supplements (session_id, position, supplement_id, reason) ` +
-        `SELECT ${sql(id)}, ${i}, id, ${sql(reason)} FROM supplements WHERE slug = ${sql(slug)};`,
+        `SELECT ${sql(id)}, ${i}, id, ${sql(reason)} FROM supplements WHERE slug IN (${sql(slug)}, ${sql(bare)}) ` +
+        `ORDER BY CASE WHEN slug = ${sql(slug)} THEN 0 ELSE 1 END LIMIT 1;`,
     );
     cards++;
   }

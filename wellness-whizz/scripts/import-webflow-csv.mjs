@@ -14,7 +14,10 @@
  * database field. The script prints which columns it matched (and which it ignored) to stderr: adjust FIELD_MAP if needed.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { EFFECTIVITY_LABELS, SAFETY_LABELS, inferCategory, parseCsv, productUrl, slugify, supplementInsert } from './lib.mjs';
+import {
+  EFFECTIVITY_LABELS, SAFETY_LABELS, inferCategory, parseCsv, productUrl, safeUrl, sanitizeRichText, slugify,
+  supplementInsert,
+} from './lib.mjs';
 
 const FIELD_MAP = {
   name: ['supplement name', 'name', 'title', 'supplement'],
@@ -99,8 +102,8 @@ for (const row of rows) {
   for (let i = 1; i <= 5; i++) {
     const pname = get(row, `product_${i}`);
     if (!pname) continue;
-    const product = { name: pname, brand: '', url: get(row, `link_${i}`) || productUrl(pname) };
-    const image = get(row, `image_${i}`);
+    const product = { name: pname, brand: '', url: safeUrl(get(row, `link_${i}`)) || productUrl(pname) };
+    const image = safeUrl(get(row, `image_${i}`));
     if (image) product.image = downloadImages ? await localImage(image, `${slug}-${i}`) : image;
     products.push(product);
   }
@@ -188,13 +191,8 @@ function mapRating(v, labels) {
 }
 
 function richText(html) {
-  // Webflow exports rich text as HTML; keep it, drop anything executable and the editor's empty id="" / blank paragraphs.
-  return String(html ?? '')
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/\son\w+="[^"]*"/gi, '')
-    .replace(/\sid=""/g, '')
-    .replace(/<p[^>]*>(?:\s|&nbsp;|\u200d|\u200b)*<\/p>/g, '')
-    .trim();
+  // Webflow exports rich text as HTML; keep the formatting, drop everything else (see sanitizeRichText).
+  return sanitizeRichText(html);
 }
 
 function stripTags(html) {

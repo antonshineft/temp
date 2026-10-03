@@ -24,7 +24,8 @@ and asset paths made local. The quiz page talks to our API instead of Webflow (`
 4. The 5 results are stored for the session and the browser is redirected to `/result/{sessionID}`.
 5. New supplements automatically appear in the home slider, the "Explore manually" list and at `/supplement/{slug}`.
 
-If the browser loses the connection while waiting, the Worker keeps going and the result page polls until it is ready.
+The browser stays connected while this runs (typically 15 to 40 seconds). See "Limits" below for what happens when it
+does not.
 
 ## Local development
 
@@ -81,8 +82,34 @@ redeploys.
 | `OPENAI_MODEL`        | `wrangler.jsonc` → `vars`   | Default `gpt-4.1-mini`. Any model that supports Structured Outputs.   |
 | `PRODUCT_SEARCH_URL`  | `wrangler.jsonc` → `vars`   | Link template for the "View More" product buttons. `{query}` is replaced by the product name. Put your affiliate tag here. |
 | `RATE_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars`   | Max quiz submissions per IP per hour (default 10). `0` disables.       |
+| `GLOBAL_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars` | Max quiz submissions per hour across all visitors (default 100). Caps your OpenAI spend if someone rotates IPs. |
+| `LIST_AI_SUPPLEMENTS`  | `wrangler.jsonc` → `vars`  | `false` keeps supplements created by the AI out of the home slider, the Explore list and `/api/supplements`. Their own pages and the result pages still work, so you can review new entries before listing them. |
+| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | `vars` / secret | Optional bot protection, see below. |
 | `DEV_FAKE_AI`         | `.dev.vars` only            | `true` returns canned data instead of calling OpenAI (no key needed). |
 | Google Ads conversions| `public/js/site.js`         | Set `window.GTAG_CONVERSION_LABEL` to your `AW-…/…` label to report conversions on card clicks. |
+
+### Bot protection with Cloudflare Turnstile (recommended)
+
+Every quiz submission costs OpenAI credits, so protect the form once the site is public:
+
+1. Cloudflare dashboard → **Turnstile → Add widget**, hostname = your domain, widget mode "Managed".
+2. Put the **site key** in `wrangler.jsonc` (`TURNSTILE_SITE_KEY`) and store the **secret key** with
+   `npx wrangler secret put TURNSTILE_SECRET_KEY`.
+3. Redeploy. The quiz page renders the widget above the submit button and the Worker rejects submissions without a
+   valid token. Leave both empty to run without it (for example in local development).
+
+Also set a monthly spend limit on your OpenAI account; the rate limits above bound the number of calls, not the price.
+
+## Limits
+
+- A Worker only outlives a closed browser connection by about 30 seconds. If a visitor leaves the quiz page while the
+  recommendation is being prepared, the session may stay unfinished; after 4 minutes it is marked failed and the
+  result page offers to start again. The OpenAI calls use short timeouts (45 s, one retry) so the normal case finishes
+  while the browser is still connected. If this matters at your traffic level, the next step is to move the pipeline
+  into a Cloudflare Workflow, which runs independently of the request.
+- The text the AI generates is published as-is (escaped, never executed). The user's free-text answers are passed to
+  the model as data and supplement names are validated, but review new AI-created entries from time to time or keep
+  them unlisted with `LIST_AI_SUPPLEMENTS=false`.
 
 ## Bringing over your Webflow CMS content
 
@@ -98,8 +125,9 @@ site's collection: Supplement Name, Safe level, Effectiveness, Safe Option, FDA 
 Contraindications, Enhancing effect, Posible interactions, Why you should consider to take it?, Content, Research,
 Form, Name 1-5, Link 1-5, Image 1-5). Rich-text fields are imported as HTML, option fields are mapped to the values the
 templates understand, the iHerb affiliate links become the "View More" buttons, and the original slugs are kept so old
-`/supplement/...` links keep working. Rows are upserted by name, so re-running the import refreshes existing rows and
-overrides the starter seed.
+`/supplement/...` links keep working. Rows are matched by name or slug, so re-running the import refreshes existing
+rows (slugs are never rewritten) and overrides the starter seed. Rich text is reduced to plain formatting tags and
+http(s) links.
 
 Product images still point at Webflow's CDN. Before cancelling Webflow, run the import once with
 `--download-images`: it copies them into `public/images/products/` and links the local files (commit that folder).
