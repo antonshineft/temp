@@ -25,7 +25,7 @@ export interface Recommendation {
 }
 
 const DEFAULT_MODEL = 'gpt-4.1-mini';
-const DEFAULT_PRODUCT_SEARCH_URL = 'https://www.amazon.com/s?k={query}';
+const DEFAULT_PRODUCT_SEARCH_URL = 'https://www.iherb.com/search?kw={query}';
 const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 
 const SYSTEM_PROMPT = [

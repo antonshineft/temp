@@ -61,7 +61,7 @@ export function safeUrl(value) {
   return /^https?:\/\/[^\s"'<>]+$/i.test(url) ? url : '';
 }
 
-export function productUrl(query, template = 'https://www.amazon.com/s?k={query}') {
+export function productUrl(query, template = 'https://www.iherb.com/search?kw={query}') {
   return template.replace('{query}', encodeURIComponent(query));
 }
 

@@ -89,12 +89,12 @@ redeploys.
 | --------------------- | --------------------------- | --------------------------------------------------------------------- |
 | `OPENAI_API_KEY`      | secret                      | Required in production.                                               |
 | `OPENAI_MODEL`        | `wrangler.jsonc` → `vars`   | Default `gpt-4.1-mini`. Any model that supports Structured Outputs.   |
-| `PRODUCT_SEARCH_URL`  | `wrangler.jsonc` → `vars`   | Link template for the "View More" product buttons. `{query}` is replaced by the product name. Put your affiliate tag here. |
+| `PRODUCT_SEARCH_URL`  | `wrangler.jsonc` → `vars`   | Link for "View More" buttons of products that have no URL of their own (supplements created by the AI). `{query}` is replaced by the product name. Default is an iHerb search; append `&rcode=YOURCODE` for affiliate credit. Imported supplements keep their own iHerb links. |
 | `RATE_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars`   | Max quiz submissions per IP per hour (default 10). `0` disables.       |
 | `GLOBAL_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars` | Max quiz submissions per hour across all visitors (default 100). Caps your OpenAI spend if someone rotates IPs. |
 | `LIST_AI_SUPPLEMENTS`  | `wrangler.jsonc` → `vars`  | `false` keeps supplements created by the AI out of the home slider, the Explore list and `/api/supplements`. Their own pages and the result pages still work, so you can review new entries before listing them. |
 | `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | `vars` / secret | Optional bot protection, see below. |
-| `DEV_FAKE_AI`         | `.dev.vars` only            | `true` returns canned data instead of calling OpenAI (no key needed). |
+| `DEV_FAKE_AI`         | `.dev.vars` only            | `true` returns canned data instead of calling OpenAI (no key needed). Do not set it on the live site: if the deploy page offers it, delete it. |
 | Google Ads conversions| `public/js/site.js`         | Set `window.GTAG_CONVERSION_LABEL` to your `AW-…/…` label to report conversions on card clicks. |
 
 ### Bot protection with Cloudflare Turnstile (recommended)

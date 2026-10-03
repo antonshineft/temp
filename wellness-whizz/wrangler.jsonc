@@ -24,7 +24,7 @@
   ],
   "vars": {
     "OPENAI_MODEL": "gpt-4.1-mini",
-    "PRODUCT_SEARCH_URL": "https://www.amazon.com/s?k={query}",
+    "PRODUCT_SEARCH_URL": "https://www.iherb.com/search?kw={query}",
     // Abuse controls for the (paid) quiz endpoint: per-IP and global submissions per hour, 0 disables.
     "RATE_LIMIT_PER_HOUR": "10",
     "GLOBAL_LIMIT_PER_HOUR": "100",
