@@ -5,8 +5,9 @@
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/antonshineft/temp/tree/main/wellness-whizz)
 
 1. Click the button (or open the link) and sign in to Cloudflare; a free account is enough.
-2. Cloudflare copies this project into your own GitHub account and shows a setup page. Keep the defaults.
-   Under **Variables and secrets**, add a secret named `OPENAI_API_KEY` with your OpenAI key.
+2. Cloudflare copies this project into your own GitHub account and shows a setup page. Keep the defaults and
+   paste your OpenAI key into the `OPENAI_API_KEY` field. (Every field on that page must be filled in; if it shows
+   anything you don't recognise, type `none`, it is ignored.)
 3. Click **Create and deploy**. After a minute or two the site is live on a `*.workers.dev` address.
 
 That is all: the database is created automatically, and on the first visit the Worker creates its tables and loads
@@ -50,7 +51,7 @@ does not.
 ```sh
 cd wellness-whizz
 npm install
-cp .dev.vars.example .dev.vars          # DEV_FAKE_AI=true lets you test without an OpenAI key
+cp .dev.vars.example .dev.vars          # add DEV_FAKE_AI=true to test without an OpenAI key
 npm run dev                             # http://localhost:8787
 ```
 
@@ -93,8 +94,8 @@ redeploys.
 | `RATE_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars`   | Max quiz submissions per IP per hour (default 10). `0` disables.       |
 | `GLOBAL_LIMIT_PER_HOUR` | `wrangler.jsonc` → `vars` | Max quiz submissions per hour across all visitors (default 100). Caps your OpenAI spend if someone rotates IPs. |
 | `LIST_AI_SUPPLEMENTS`  | `wrangler.jsonc` → `vars`  | `false` keeps supplements created by the AI out of the home slider, the Explore list and `/api/supplements`. Their own pages and the result pages still work, so you can review new entries before listing them. |
-| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | `vars` / secret | Optional bot protection, see below. |
-| `DEV_FAKE_AI`         | `.dev.vars` only            | `true` returns canned data instead of calling OpenAI (no key needed). Do not set it on the live site: if the deploy page offers it, delete it. |
+| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | dashboard variable / secret | Optional bot protection, see below. Active only when both are set. |
+| `DEV_FAKE_AI`         | `.dev.vars` only            | `true` returns canned data instead of calling OpenAI (no key needed). Only honoured on localhost; a deployed site ignores it. |
 | Google Ads conversions| `public/js/site.js`         | Set `window.GTAG_CONVERSION_LABEL` to your `AW-…/…` label to report conversions on card clicks. |
 
 ### Bot protection with Cloudflare Turnstile (recommended)
@@ -102,10 +103,10 @@ redeploys.
 Every quiz submission costs OpenAI credits, so protect the form once the site is public:
 
 1. Cloudflare dashboard → **Turnstile → Add widget**, hostname = your domain, widget mode "Managed".
-2. Put the **site key** in `wrangler.jsonc` (`TURNSTILE_SITE_KEY`) and store the **secret key** with
-   `npx wrangler secret put TURNSTILE_SECRET_KEY`.
-3. Redeploy. The quiz page renders the widget above the submit button and the Worker rejects submissions without a
-   valid token. Leave both empty to run without it (for example in local development).
+2. In the Worker's **Settings → Variables and Secrets**, add `TURNSTILE_SITE_KEY` (plain variable, the site key) and
+   `TURNSTILE_SECRET_KEY` (secret). No redeploy needed.
+3. The quiz page then renders the widget above the submit button and the Worker rejects submissions without a valid
+   token. With either value missing the site runs without Turnstile.
 
 Also set a monthly spend limit on your OpenAI account; the rate limits above bound the number of calls, not the price.
 

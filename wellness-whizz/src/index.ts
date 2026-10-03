@@ -45,6 +45,10 @@ const PENDING_TIMEOUT_MS = 4 * 60 * 1000;
 
 const htmlHeaders = (cacheControl: string) => ({ 'content-type': 'text/html; charset=utf-8', 'cache-control': cacheControl });
 const curatedOnly = (env: Bindings) => env.LIST_AI_SUPPLEMENTS === 'false';
+/** DEV_FAKE_AI (canned answers instead of OpenAI) is honoured on localhost only, never on a deployed site. */
+const isLocalRequest = (url: string) => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(new URL(url).hostname);
+/** Turnstile is on only when both the public site key and the secret are configured. */
+const turnstileSiteKey = (env: Bindings) => (env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY ? env.TURNSTILE_SITE_KEY : null);
 
 // Same security headers as public/_headers applies to the static files; the database is prepared on first use.
 app.use('*', async (c, next) => {
@@ -98,7 +102,7 @@ app.get('/supplement/:slug', async (c) => {
 
 app.get('/api/config', (c) => {
   c.header('cache-control', 'public, max-age=300');
-  return c.json({ turnstileSiteKey: c.env.TURNSTILE_SITE_KEY || null });
+  return c.json({ turnstileSiteKey: turnstileSiteKey(c.env) });
 });
 
 app.post('/api/quiz', async (c) => {
@@ -111,14 +115,15 @@ app.post('/api/quiz', async (c) => {
 
   const validation = validateProfile(body);
   if (!validation.ok) return reject(400, validation.error);
-  if (!c.env.OPENAI_API_KEY && c.env.DEV_FAKE_AI !== 'true') {
+  const env: Bindings = { ...c.env, DEV_FAKE_AI: isLocalRequest(c.req.url) ? c.env.DEV_FAKE_AI : undefined };
+  if (!env.OPENAI_API_KEY && env.DEV_FAKE_AI !== 'true') {
     return reject(503, 'The advisor is not configured yet: the site owner must add the OPENAI_API_KEY secret in Cloudflare.');
   }
 
   const ip = c.req.header('cf-connecting-ip') ?? '';
-  if (c.env.TURNSTILE_SECRET_KEY) {
+  if (env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY) {
     const token = String(body['cf-turnstile-response'] ?? '');
-    if (!token || !(await verifyTurnstile(c.env.TURNSTILE_SECRET_KEY, token, ip))) {
+    if (!token || !(await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, ip))) {
       return reject(400, 'Verification failed. Please reload the page and try again.');
     }
   }
@@ -147,7 +152,7 @@ app.post('/api/quiz', async (c) => {
   if (!(await createSession(c.env.DB, id, validation.profile, ipHash))) return existingResponse(); // lost a race
 
   // The browser stays connected while the pipeline runs; waitUntil covers a short disconnect at the end.
-  const work = runQuizPipeline(c.env, id, validation.profile).then(
+  const work = runQuizPipeline(env, id, validation.profile).then(
     () => 'ready' as const,
     () => 'failed' as const,
   );

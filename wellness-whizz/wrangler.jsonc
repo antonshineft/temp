@@ -30,10 +30,9 @@
     "GLOBAL_LIMIT_PER_HOUR": "100",
     // "false" keeps supplements created by the AI out of the home slider, the Explore list and /api/supplements
     // (their own pages and result pages still work).
-    "LIST_AI_SUPPLEMENTS": "true",
-    // Optional Cloudflare Turnstile bot protection: set the site key here and the secret with
-    // `wrangler secret put TURNSTILE_SECRET_KEY`.
-    "TURNSTILE_SITE_KEY": ""
+    "LIST_AI_SUPPLEMENTS": "true"
+    // Optional Cloudflare Turnstile bot protection: add TURNSTILE_SITE_KEY (variable) and TURNSTILE_SECRET_KEY (secret)
+    // in the Cloudflare dashboard under the Worker's Settings -> Variables and Secrets. Both are needed to enable it.
   },
   "observability": { "enabled": true }
 }
