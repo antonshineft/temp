@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local development (never commit .dev.vars).
+# Your OpenAI key. Leave empty and set DEV_FAKE_AI=true to develop without spending credits.
+OPENAI_API_KEY=
+DEV_FAKE_AI=true
