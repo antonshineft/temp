@@ -1,0 +1,495 @@
+/* Wellness Whizz additions on top of the Webflow export: shop buttons, product picks, sticky mobile bar. */
+.ww-products { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 14px 0 6px; }
+.ww-product { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 92px; color: #1d272d; text-decoration: none; font-family: Aeonik, sans-serif; }
+.ww-product img { width: 76px; height: 76px; object-fit: contain; padding: 4px; background: #fdf1cf; border-radius: 14px; transition: transform .15s, box-shadow .15s; }
+.ww-product span { font-size: 12px; line-height: 14px; text-align: center; max-height: 28px; overflow: hidden; }
+.ww-product:hover img { transform: translateY(-2px); box-shadow: 0 6px 16px #1d272d26; }
+.ww-actions { display: flex; flex: 1 1 auto; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
+.ww-actions .fakebutton { padding: 16px 26px; font-size: 20px; line-height: 24px; white-space: nowrap; }
+/* Result cards are green, so the primary button is the dark pill and "More Details" becomes an outline. */
+.fakebutton.ww-buy { background-color: #1d272d; color: #fff; }
+.fakebutton.ww-buy:hover { background-color: #2f3d46; }
+.fakebutton.ww-secondary { background-color: transparent; color: #1d272d; border: 1.5px solid #1d272d66; }
+.fakebutton.ww-secondary:hover { background-color: #1d272d14; }
+.ww-disclosure { font-family: Aeonik, sans-serif; font-size: 12px; line-height: 16px; color: #1d272d; opacity: .65; margin: 10px 20px 0; }
+.ww-disclosure.on-dark { color: #fff; }
+.ww-strip-wrap { width: 100%; padding: 0 20px; box-sizing: border-box; }
+.ww-strip-title { font-family: Aeonik, sans-serif; font-size: 14px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #1d272d99; margin: 6px 0 10px; }
+.ww-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.ww-pick { display: flex; flex-direction: column; align-items: center; gap: 8px; background: #ecf3f6; border-radius: 20px; padding: 14px 10px; text-align: center; font-family: Aeonik, sans-serif; color: #1d272d; }
+.ww-pick img { width: 120px; height: 120px; object-fit: contain; padding: 6px; background: #fdf1cf; border-radius: 16px; }
+.ww-pick-text { justify-content: center; min-height: 150px; }
+.ww-pick-name small { display: block; font-size: 12px; font-weight: 400; opacity: .7; }
+.ww-pick-name { font-size: 14px; line-height: 18px; font-weight: 500; min-height: 36px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ww-pick .outbutton { padding: 10px 16px; font-size: 14px; text-decoration: none; }
+.ww-sticky { display: none; }
+@media (max-width: 767px) {
+  .ww-sticky { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #1d272d; color: #fff; border-radius: 18px; padding: 10px 12px 10px 16px; box-shadow: 0 8px 24px #0006; font-family: Aeonik, sans-serif; }
+  .ww-sticky span { font-size: 13px; line-height: 16px; opacity: .9; }
+  .ww-sticky .outbutton { white-space: nowrap; text-decoration: none; }
+  body.ww-has-sticky { padding-bottom: 84px; }
+  .ww-products { justify-content: center; }
+  .ww-actions { justify-content: center; width: 100%; }
+  .ww-actions .fakebutton { flex: 1 1 45%; text-align: center; padding: 14px 12px; font-size: 16px; line-height: 20px; }
+}
+
+/* ---------- result cards: green card, cream photo tile, light-green action band ---------- */
+.resultsclass .result-card-frame { padding: 0; overflow: hidden; border-radius: 36px; background-color: #87d581; }
+.ww-card { display: flex; flex-direction: column; font-family: Aeonik, sans-serif; color: #1d272d; }
+.ww-card-main { display: flex; gap: 24px; align-items: flex-start; padding: 24px; }
+/* Square photo panel: every card gets the same height from it. */
+.ww-card-media { flex: 0 0 280px; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; background: #fdf1cf; border-radius: 28px; overflow: hidden; }
+.ww-card-media img { width: 100%; height: 100%; object-fit: contain; transition: transform .2s; }
+.ww-card-media:hover img { transform: scale(1.04); }
+.ww-card-body { flex: 1 1 auto; min-width: 0; min-height: 280px; display: flex; flex-direction: column; gap: 12px; padding: 2px 0 0; box-sizing: border-box; }
+.ww-card-title { margin: 0; font-family: Aeonik, sans-serif; font-size: 40px; line-height: 1.05; font-weight: 500; text-transform: uppercase; color: #1d272d; overflow-wrap: anywhere; }
+.ww-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+/* One tag style for everything on the card: same font, size and padding. Dark variant for FDA and effectivity. */
+.ww-tag { display: inline-flex; align-items: center; gap: 6px; font-family: Aeonik, sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: #1d272d; background: #1d272d14; border-radius: 999px; padding: 6px 12px; line-height: 16px; height: 28px; box-sizing: border-box; white-space: nowrap; }
+.ww-tag b { font-weight: 700; font-size: 11px; width: 14px; height: 14px; border-radius: 50%; background: #1d272d; color: #fff; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+.ww-tag-dark { background: #1d272d; color: #fff; }
+.ww-tag-dark b { background: #87d581; color: #1d272d; }
+.ww-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; margin: 0 2px; }
+.ww-bars i { display: block; width: 3px; border-radius: 1px; background: #ffffff55; }
+.ww-bars i.on { background: #87d581; }
+.ww-card-meta .ww-tag { height: 32px; font-size: 13px; padding: 8px 14px; }
+.frame-52 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.frame-52 .ww-tag { height: 32px; font-size: 13px; padding: 8px 14px; margin: 0; }
+.ww-tag.ww-tag-good { background: #87d581; color: #1d272d; }
+.ww-tag.ww-tag-good b { background: #1d272d; color: #fff; }
+.ww-tag.ww-tag-warn { background: #ffb4b4; color: #1d272d; }
+.ww-tag.ww-tag-warn b { background: #b3261e; color: #fff; }
+.ww-card-text { margin: 0; font-size: 18px; line-height: 28px; color: #1d272d; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.ww-card .ww-products { margin: 4px 0 0; gap: 10px 16px; }
+.ww-card .ww-product { width: 104px; }
+.ww-card .ww-product img { width: 96px; height: 96px; padding: 8px; border-radius: 18px; }
+.ww-card .ww-product span { font-size: 13px; line-height: 16px; max-height: 32px; }
+/* Action band under the text column. */
+.ww-card-bottom { background: #b7e6b1; padding: 20px 24px 20px calc(24px + 280px + 24px); }
+.ww-card-bottom .ww-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ww-card-bottom .ww-actions .fakebutton { width: 100%; padding: 18px 20px; font-size: 22px; line-height: 28px; text-align: center; box-sizing: border-box; border-radius: 20px; white-space: normal; }
+.fakebutton.ww-secondary { border: 2px solid #1d272d66; }
+@media (max-width: 991px) {
+  .ww-card-media { flex-basis: 220px; width: 220px; height: 220px; }
+  .ww-card-body { min-height: 220px; }
+  .ww-card-title { font-size: 32px; }
+  .ww-card-bottom { padding-left: calc(24px + 220px + 24px); }
+  .ww-card-bottom .ww-actions .fakebutton { font-size: 18px; line-height: 24px; padding: 14px 16px; }
+}
+@media (max-width: 767px) {
+  .resultsclass .result-card-frame { border-radius: 28px; }
+  .ww-card-main { flex-direction: column; gap: 16px; padding: 16px; }
+  .ww-card-media { flex: none; width: 100%; height: 240px; padding: 14px; }
+  .ww-card-body { min-height: 0; }
+  .ww-card-meta { justify-content: center; }
+  .ww-card-title { font-size: 28px; text-align: center; }
+  .ww-card-text { font-size: 16px; line-height: 24px; }
+  .ww-card-bottom { padding: 16px; }
+  .ww-card-bottom .ww-actions { gap: 10px; }
+  .ww-card-bottom .ww-actions .fakebutton { font-size: 16px; line-height: 20px; padding: 14px 10px; }
+}
+
+/* ---------- home page: centre blocks that the export pinned to a 1440px layout ---------- */
+.frame-244 { left: 0; right: 0; margin-left: auto; margin-right: auto; width: fit-content; max-width: calc(100% - 40px); }
+.manuallinks { margin-left: auto; margin-right: auto; padding-left: 100px; padding-right: 100px; box-sizing: border-box; }
+.manuallinks .linksnav { width: 100%; }
+@media (max-width: 767px) {
+  .manuallinks { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ---------- supplement page: generated article typography ---------- */
+.rich-text-block-4 h3 { font-family: Aeonik, sans-serif; font-size: 28px; line-height: 36px; font-weight: 500; color: #fff; margin: 0 0 12px; }
+.rich-text-block-4 h4 { font-family: Aeonik, sans-serif; font-size: 20px; line-height: 28px; font-weight: 500; color: #87d581; margin: 24px 0 8px; }
+.rich-text-block-4 p { margin: 0 0 14px; }
+.rich-text-block-4 ul { padding-left: 20px; margin: 0 0 14px; }
+
+/* ---------- home slider: product photo on the cream square ---------- */
+.ww-slider-photo { object-fit: contain; padding: 10px; background: #fdf1cf; border: none; }
+
+/* ---------- generated illustrations ---------- */
+.ww-generated-tile { object-fit: contain; padding: 24px; background: #fdf1cf; }
+
+/* ---------- footer links ---------- */
+a.ww-footer-link { opacity: .6; text-decoration: none; transition: opacity .15s; }
+a.ww-footer-link:hover { opacity: 1; }
+
+/* ---------- supplement page: centre the "Top 5" block and put product photos on the cream tile ---------- */
+.gallery-scroll-2 { margin-left: auto; margin-right: auto; }
+.convertedimage14-4 { object-fit: contain; background: #fdf1cf; padding: 16px; box-sizing: border-box; }
+
+/* ---------- home carousel: a continuous loop of cards (replaces the Webflow slider) ---------- */
+.ww-carousel { width: 100%; }
+.ww-carousel-mask { overflow: hidden; width: 100%; }
+.ww-carousel-track { display: flex; align-items: stretch; gap: 20px; width: max-content; padding: 0 10px; will-change: transform; }
+.ww-carousel-item { flex: 0 0 auto; width: 440px; float: none; padding: 0; position: relative; }
+.ww-carousel-item .imagecard { min-width: 0; width: 100%; margin-right: 0; background: #ecf3f6; padding: 10px; box-sizing: border-box; }
+.ww-carousel-item .link-block-2 { min-width: 0; z-index: 2; }
+.ww-carousel-item .convertedimage2 { width: 213px; height: 213px; flex: 0 0 auto; }
+.ww-carousel-item .frame-256 { min-height: 213px; }
+.ww-carousel.is-dragging .ww-carousel-track { cursor: grabbing; }
+.ww-carousel .ww-arrow { cursor: pointer; }
+.ww-carousel .ww-arrow:focus-visible { outline: 2px solid #87d581; outline-offset: 2px; border-radius: 40px; }
+@media (max-width: 767px) {
+  .ww-carousel-item { width: 360px; }
+  .ww-carousel-item .convertedimage2 { width: 160px; height: 160px; }
+  .ww-carousel-item .frame-256 { min-height: 160px; }
+}
+@media (max-width: 479px) {
+  .ww-carousel-item { width: 300px; }
+  .ww-carousel-item .convertedimage2 { width: 130px; height: 130px; }
+  .ww-carousel-item .frame-256 { min-height: 130px; }
+  .ww-carousel-item .text-75 { font-size: 22px; line-height: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ww-carousel-track { transition: none; }
+}
+
+/* ---------- editorial pages (how it works, terms, blog) ---------- */
+.ww-page-wrap { font-family: Aeonik, sans-serif; color: #1d272d; padding: 0; }
+/* Hero runs edge to edge like the other site blocks (10px gutter, rounded corners); its text lines up with the 1200px content column. */
+.ww-page-hero { margin: 10px 10px 40px; padding: 70px 24px 56px; border-radius: 40px; background-image: linear-gradient(#bcffb7, #fff0); box-sizing: border-box; }
+/* 1132px = the .ww-page content width (1200px minus its 34px side padding), so hero text lines up with the cards below */
+.ww-page-hero-inner { max-width: 1132px; margin: 0 auto; display: flex; gap: 32px; align-items: center; justify-content: space-between; }
+.ww-page-hero-text { max-width: 820px; }
+.ww-eyebrow { font-size: 14px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; margin-bottom: 14px; font-weight: 500; }
+.ww-page-title { font-family: Aeonik, sans-serif; font-size: 64px; line-height: 1.02; font-weight: 500; letter-spacing: -.02em; margin: 0 0 18px; color: #1d272d; }
+.ww-page-lead { font-size: 22px; line-height: 32px; font-weight: 500; margin: 0; }
+.ww-page-hero-media { flex: 0 0 280px; width: 280px; height: 280px; background: #fdf1cf; border-radius: 28px; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; }
+.ww-page-hero-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ww-page { max-width: 1200px; margin: 0 auto; padding: 0 34px 80px; box-sizing: border-box; } /* 34px = hero margin 10px + hero padding 24px */
+.ww-prose { font-size: 18px; line-height: 30px; max-width: 780px; }
+.ww-prose h2 { font-family: Aeonik, sans-serif; font-size: 34px; line-height: 40px; font-weight: 500; margin: 48px 0 16px; color: #1d272d; }
+.ww-prose h3 { font-family: Aeonik, sans-serif; font-size: 24px; line-height: 32px; font-weight: 500; margin: 32px 0 10px; color: #1d272d; }
+.ww-prose h2:first-child { margin-top: 0; }
+.ww-prose p { margin: 0 0 18px; }
+.ww-prose ul, .ww-prose ol { padding-left: 24px; margin: 0 0 18px; }
+.ww-prose li { margin-bottom: 8px; }
+.ww-prose a { color: #1d272d; text-decoration: underline; text-decoration-color: #87d581; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.ww-prose a:hover { background: #87d58133; }
+.ww-prose blockquote { margin: 28px 0; padding: 18px 24px; border-left: 4px solid #87d581; background: #ecf3f6; border-radius: 0 20px 20px 0; font-size: 20px; line-height: 30px; }
+.ww-prose blockquote p:last-child { margin-bottom: 0; }
+.ww-prose table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 22px; margin: 0 0 24px; display: block; overflow-x: auto; }
+.ww-prose th, .ww-prose td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #1d272d1a; vertical-align: top; min-width: 110px; }
+.ww-prose th { font-weight: 700; background: #ecf3f6; }
+.ww-legal-updated { font-size: 14px; opacity: .6; text-transform: uppercase; letter-spacing: .06em; }
+.ww-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin: 0 0 20px; }
+.ww-step { background: #ecf3f6; border-radius: 28px; padding: 26px; }
+.ww-step b { display: inline-flex; width: 40px; height: 40px; border-radius: 50%; background: #1d272d; color: #87d581; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 14px; }
+.ww-step h3 { margin: 0 0 8px; font-family: Aeonik, sans-serif; font-size: 22px; line-height: 28px; font-weight: 700; color: #1d272d; }
+.ww-step p { margin: 0; font-size: 16px; line-height: 24px; }
+.ww-cta { background: #1d272d; color: #fff; border-radius: 32px; padding: 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin: 48px 0; }
+.ww-cta h3 { margin: 0 0 6px; font-family: Aeonik, sans-serif; font-size: 28px; line-height: 34px; font-weight: 500; color: #fff; }
+.ww-cta p { margin: 0; opacity: .8; font-size: 16px; line-height: 24px; max-width: 560px; }
+.ww-cta .footerbutton { padding: 16px 36px; text-decoration: none; }
+.ww-faq { max-width: 780px; }
+.ww-faq h2 { font-family: Aeonik, sans-serif; font-size: 34px; line-height: 40px; font-weight: 500; margin: 48px 0 10px; }
+.ww-faq details { border-top: 1px solid #1d272d1a; padding: 16px 0; }
+.ww-faq details:last-child { border-bottom: 1px solid #1d272d1a; }
+.ww-faq summary { cursor: pointer; font-weight: 700; font-size: 18px; line-height: 26px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.ww-faq summary::-webkit-details-marker { display: none; }
+.ww-faq summary::after { content: ''; flex: 0 0 auto; width: 10px; height: 10px; margin: 6px 6px 0 0; border-right: 2.5px solid #87d581; border-bottom: 2.5px solid #87d581; transform: rotate(45deg); transition: transform .2s; }
+.ww-faq details[open] summary::after { transform: rotate(225deg); margin-top: 10px; }
+.ww-faq p { margin: 10px 0 0; font-size: 16px; line-height: 26px; }
+/* blog index */
+.ww-posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.ww-post-card.is-hidden { display: none; }
+.ww-more-wrap { display: flex; justify-content: center; margin-top: 32px; }
+.ww-more { border: 0; cursor: pointer; font-family: inherit; }
+.ww-post-card { display: flex; flex-direction: column; background: #ecf3f6; border-radius: 28px; overflow: hidden; text-decoration: none; color: #1d272d; transition: transform .15s, box-shadow .15s; }
+.ww-post-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px #1d272d1f; }
+.ww-post-card-media { background: #fdf1cf; height: 220px; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+.ww-post-card-media img { max-height: 100%; max-width: 100%; object-fit: contain; }
+.ww-post-card-body { padding: 20px 22px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; flex: 1 1 auto; }
+.ww-post-card-body .ww-tag { align-self: flex-start; }
+.ww-post-card h2 { font-family: Aeonik, sans-serif; font-size: 24px; line-height: 30px; font-weight: 700; margin: 0; color: #1d272d; }
+.ww-post-card p { margin: 0; font-size: 15px; line-height: 23px; opacity: .85; }
+.ww-post-meta { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; opacity: .6; margin-top: auto; }
+.ww-blog-intro { max-width: 780px; margin: 0 0 32px; font-size: 18px; line-height: 30px; }
+/* blog article */
+.ww-article-layout { display: grid; grid-template-columns: minmax(0, 780px) 320px; gap: 56px; align-items: start; }
+.ww-article-aside { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 16px; }
+.ww-article-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 14px; opacity: .75; margin: 0 0 28px; }
+.ww-article-meta .ww-tag { opacity: 1; }
+.ww-shop { background: #ecf3f6; border-radius: 24px; padding: 20px; }
+.ww-shop h4 { margin: 0 0 6px; font-family: Aeonik, sans-serif; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; font-weight: 700; }
+.ww-shop-item { display: flex; flex-direction: column; gap: 10px; padding: 12px 0; border-top: 1px solid #1d272d14; }
+.ww-shop-top { display: flex; gap: 12px; align-items: center; }
+.ww-shop-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ww-shop-actions .ww-shop-link { font-size: 13px; color: #1d272d; text-decoration: underline; text-decoration-color: #87d581; text-underline-offset: 2px; white-space: nowrap; }
+.ww-shop-actions .fakebutton.ww-shop-buy { flex: 1 1 auto; text-align: center; }
+.ww-shop-item:first-of-type { border-top: 0; }
+.ww-shop-thumb { flex: 0 0 72px; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #fdf1cf; border-radius: 16px; padding: 6px; box-sizing: border-box; }
+.ww-shop-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ww-shop-info { flex: 1 1 auto; min-width: 0; }
+.ww-shop-name { font-weight: 700; font-size: 15px; line-height: 20px; }
+.ww-shop-brand { font-size: 13px; line-height: 18px; opacity: .7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ww-shop-info a { font-size: 13px; color: #1d272d; text-decoration: underline; text-decoration-color: #87d581; text-underline-offset: 2px; }
+.ww-shop .fakebutton.ww-shop-buy { padding: 10px 14px; font-size: 14px; line-height: 18px; border-radius: 14px; white-space: nowrap; text-decoration: none; }
+.ww-shop-inline { margin: 28px 0; }
+/* Inside the article body the block is wide: one row per product (photo, name, then the links on the right). */
+.ww-shop-inline .ww-shop-item { flex-direction: row; align-items: center; gap: 16px; }
+.ww-shop-inline .ww-shop-top { flex: 1 1 auto; min-width: 0; }
+.ww-shop-inline .ww-shop-actions { flex: 0 0 auto; justify-content: flex-end; gap: 18px; }
+.ww-shop-inline .ww-shop-actions .fakebutton.ww-shop-buy { flex: 0 0 auto; width: auto; }
+@media (max-width: 600px) {
+  .ww-shop-inline .ww-shop-item { flex-direction: column; align-items: stretch; gap: 10px; }
+  .ww-shop-inline .ww-shop-actions { justify-content: space-between; gap: 12px; }
+  .ww-shop-inline .ww-shop-actions .fakebutton.ww-shop-buy { flex: 1 1 auto; width: 100%; }
+}
+.ww-sources { margin: 64px 0 56px; padding-top: 32px; border-top: 1px solid #1d272d1a; }
+.ww-sources h2 { margin-top: 0; }
+.ww-sources ol { font-size: 15px; line-height: 24px; }
+.ww-sources a { word-break: break-word; }
+.ww-note { font-size: 14px; line-height: 22px; opacity: .7; }
+/* Article aside: the quiz card. Salad-green fade, a 1px frame inside, and a still from the home video fading into it. */
+.ww-quiz-card { display: block; text-decoration: none; color: #1d272d; border-radius: 26px; padding: 10px; background-image: linear-gradient(170deg, #bcffb7, #dcffd8 55%, #f3fff1); }
+.ww-quiz-card-frame { border: 1px solid #1d272d1f; border-radius: 18px; padding: 16px; overflow: hidden; }
+.ww-quiz-card-media { margin: -16px -16px 12px; }
+.ww-quiz-card-media img { display: block; width: 100%; height: 150px; object-fit: cover; -webkit-mask-image: linear-gradient(#000 50%, transparent); mask-image: linear-gradient(#000 50%, transparent); }
+.ww-quiz-card h4 { margin: 0 0 6px; font-family: Aeonik, sans-serif; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; font-weight: 700; }
+.ww-quiz-card p { margin: 0 0 14px; font-size: 14px; line-height: 22px; opacity: .85; }
+.ww-quiz-card .ww-shop-buy { display: inline-block; padding: 10px 14px; font-size: 14px; line-height: 18px; border-radius: 14px; }
+.ww-quiz-card:hover .ww-shop-buy { background-color: #2f3d46; }
+.ww-related { margin-top: 56px; }
+.ww-related h2 { font-family: Aeonik, sans-serif; font-size: 34px; line-height: 40px; font-weight: 500; margin: 0 0 20px; }
+@media (max-width: 991px) {
+  .ww-article-layout { grid-template-columns: 1fr; gap: 32px; }
+  .ww-article-aside { position: static; }
+  .ww-page-title { font-size: 48px; }
+}
+@media (max-width: 767px) {
+  .ww-page-hero { padding: 40px 20px 32px; margin: 10px 10px 28px; border-radius: 28px; }
+  .ww-page-hero-inner { flex-direction: column; align-items: flex-start; }
+  .ww-page { padding: 0 30px 60px; } /* hero margin 10px + mobile hero padding 20px */
+  .ww-page-hero-media { width: 100%; flex-basis: auto; height: 220px; }
+  .ww-page-title { font-size: 36px; }
+  .ww-page-lead { font-size: 18px; line-height: 26px; }
+  .ww-prose { font-size: 17px; line-height: 28px; }
+  .ww-prose h2 { font-size: 28px; line-height: 34px; }
+  .ww-cta { padding: 26px; }
+  .ww-shop .fakebutton.ww-shop-buy { width: 100%; text-align: center; }
+}
+.ww-only-mobile { display: none; }
+@media (max-width: 991px) {
+  .ww-only-desktop { display: none; }
+  .ww-only-mobile { display: block; margin: 32px 0; }
+}
+/* keep long tables and words inside the phone viewport */
+.ww-article-layout > * { min-width: 0; }
+.ww-prose { min-width: 0; overflow-wrap: anywhere; }
+.ww-prose table { max-width: 100%; -webkit-overflow-scrolling: touch; }
+/* cells keep whole words and the table scrolls sideways instead of breaking words mid-way */
+.ww-prose th, .ww-prose td { overflow-wrap: normal; word-break: normal; }
+@media (max-width: 991px) {
+  .ww-article-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- reading progress bar (article pages) ---------- */
+.ww-progress { position: fixed; top: 0; left: 0; height: 4px; width: 0; background: #87d581; z-index: 2000; pointer-events: none; transition: width .08s linear; }
+
+/* ---------- plain, centred editorial pages (How it works, Terms) ---------- */
+.ww-page-hero.is-plain { background-image: none; padding-bottom: 20px; }
+.ww-page-hero.is-plain .ww-page-hero-inner { justify-content: center; text-align: center; }
+.ww-page-hero.is-plain .ww-page-hero-text { max-width: 860px; }
+.ww-page-hero.is-plain .ww-page-lead { margin: 0 auto; }
+.ww-page.is-centered .ww-prose, .ww-page.is-centered .ww-faq, .ww-page.is-centered .ww-cta { margin-left: auto; margin-right: auto; }
+.ww-page.is-centered .ww-cta { max-width: 780px; box-sizing: border-box; }
+.ww-page.is-centered .ww-steps { max-width: 1200px; margin-left: auto; margin-right: auto; }
+.ww-page.is-centered .ww-step { text-align: left; }
+
+/* ---------- home page: blog teaser (green fade with a framed panel, like the supplement page header) ---------- */
+.ww-teaser { margin: 60px 10px 40px; padding: 30px 20px; border-radius: 40px; background-image: linear-gradient(#bcffb7, #fff0); font-family: Aeonik, sans-serif; color: #1d272d; }
+.ww-teaser-frame { max-width: 1200px; margin: 0 auto; background-color: #d2f0d01a; border: 1px solid #0000001a; border-radius: 30px; padding: 30px 32px 32px; }
+.ww-teaser-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.ww-teaser-title { margin: 0; font-family: Aeonik, sans-serif; font-size: 44px; line-height: 48px; font-weight: 500; color: #1d272d; }
+.ww-teaser-link { font-size: 16px; font-weight: 700; color: #1d272d; text-decoration: none; border-bottom: 2px solid #87d581; padding-bottom: 2px; }
+.ww-teaser-link:hover { border-bottom-color: #1d272d; }
+.ww-teaser .ww-post-card { background: #fff; }
+.ww-teaser .ww-post-card-media { height: 200px; }
+@media (max-width: 767px) {
+  .ww-teaser { margin: 30px 10px 20px; padding: 16px 10px; border-radius: 28px; }
+  .ww-teaser-frame { padding: 20px 16px; border-radius: 22px; }
+  .ww-teaser-title { font-size: 32px; line-height: 36px; }
+}
+/* product photos that still carry iHerb's white background: blend it into the tile */
+img.ww-opaque { mix-blend-mode: multiply; }
+.ww-teaser-actions { display: flex; justify-content: center; margin-top: 28px; }
+.ww-teaser-btn { color: #fff; text-decoration: none; padding: 19px 50px; border-radius: 20px; font-size: 24px; line-height: 32px; font-weight: 700; }
+.ww-teaser-btn:hover { background-image: linear-gradient(#2f3d46, #4b5962); }
+
+/* ---------- email capture ---------- */
+.ww-capture { font-family: Aeonik, sans-serif; color: #1d272d; background: #ecf3f6; border-radius: 28px; padding: 26px 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+.ww-capture.on-dark { background: #2a363d; color: #fff; }
+.ww-capture-text { flex: 1 1 300px; min-width: 0; }
+.ww-capture h3 { margin: 0 0 4px; font-family: Aeonik, sans-serif; font-size: 24px; line-height: 30px; font-weight: 700; color: inherit; }
+.ww-capture p { margin: 0; font-size: 15px; line-height: 22px; opacity: .8; }
+.ww-capture form { display: flex; flex: 1 1 360px; gap: 10px; flex-wrap: wrap; }
+.ww-capture input[type="email"] { flex: 1 1 200px; min-width: 0; height: 52px; border: 1.5px solid #1d272d33; border-radius: 16px; padding: 0 16px; font-family: Aeonik, sans-serif; font-size: 16px; color: #1d272d; background: #fff; outline: none; }
+.ww-capture input[type="email"]:focus { border-color: #87d581; box-shadow: 0 0 0 3px #87d58155; }
+.ww-capture button { height: 52px; padding: 0 22px; border: 0; border-radius: 16px; background: #1d272d; color: #fff; font-family: Aeonik, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.ww-capture.on-dark button { background: #87d581; color: #1d272d; }
+.ww-capture button:hover { filter: brightness(1.1); }
+.ww-capture button[disabled] { opacity: .6; cursor: default; }
+.ww-capture-note { flex-basis: 100%; font-size: 13px; line-height: 18px; opacity: .7; margin: -4px 0 0; }
+.ww-capture-note.is-success { opacity: 1; color: #1d272d; font-weight: 700; }
+.ww-capture.on-dark .ww-capture-note.is-success { color: #87d581; }
+.ww-capture-note.is-error { opacity: 1; color: #b3261e; }
+.ww-capture.on-dark .ww-capture-note.is-error { color: #ffb4ab; }
+.ww-capture.is-compact { flex-direction: column; align-items: stretch; padding: 20px; gap: 14px; }
+.ww-capture.is-compact .ww-capture-text { flex: 0 0 auto; }
+.ww-capture.is-compact h3 { font-size: 20px; line-height: 26px; }
+.ww-capture.is-compact form { flex: 0 0 auto; flex-direction: column; }
+.ww-capture.is-compact input[type="email"] { flex: 0 0 auto; width: 100%; box-sizing: border-box; }
+.ww-capture.is-compact .ww-capture-note { flex-basis: auto; }
+.ww-capture.is-compact button { width: 100%; }
+.ww-capture input[type="email"] { box-sizing: border-box; }
+/* Same width as the result cards, stacked layout so it reads as one more card. */
+.resultsclass .ww-capture-wrap { max-width: 1020px; margin: 0 auto; padding: 10px; box-sizing: border-box; }
+.resultsclass .ww-capture { flex-direction: column; align-items: stretch; gap: 18px; border-radius: 36px; padding: 28px 32px; }
+.resultsclass .ww-capture-text { flex: 0 0 auto; }
+.resultsclass .ww-capture form { flex: 0 0 auto; }
+@media (max-width: 767px) {
+  .ww-capture { padding: 20px; border-radius: 22px; }
+  .ww-capture button { width: 100%; }
+}
+
+/* ---------- supplement page: related supplements ---------- */
+.ww-related-wrap { font-family: Aeonik, sans-serif; color: #1d272d; padding: 60px 20px 10px; }
+.ww-related-inner { max-width: 1200px; margin: 0 auto; }
+.ww-related-title { margin: 0 0 20px; font-family: Aeonik, sans-serif; font-size: 44px; line-height: 48px; font-weight: 500; color: #1d272d; }
+.ww-related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.ww-related-tile { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #ecf3f6; border-radius: 24px; padding: 16px; text-decoration: none; color: #1d272d; transition: transform .15s, box-shadow .15s; }
+.ww-related-tile:hover { transform: translateY(-3px); box-shadow: 0 10px 30px #1d272d1f; }
+.ww-related-media { width: 100%; height: 170px; background: #fdf1cf; border-radius: 18px; display: flex; align-items: center; justify-content: center; padding: 14px; box-sizing: border-box; }
+.ww-related-media img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.ww-related-name { font-size: 18px; line-height: 24px; font-weight: 700; text-align: center; }
+@media (max-width: 767px) {
+  .ww-related-wrap { padding: 40px 10px 0; }
+  .ww-related-title { font-size: 32px; line-height: 36px; }
+  .ww-related-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ww-related-media { height: 130px; }
+}
+
+/* ---------- research notes ---------- */
+/* The research page's short explainer: centred above the notes, in a rounded frame of the same width. */
+.ww-research-intro { max-width: 780px; margin: 0 auto 28px; padding: 22px 30px; box-sizing: border-box; border: 1px solid #1d272d1f; border-radius: 24px; background: #fff; text-align: center; font-size: 17px; line-height: 28px; color: #1d272d; }
+.ww-notes { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+/* Research filters: two rows of chips (category, study type), the count line, and the "Show more" button. */
+.ww-rfilter { max-width: 780px; margin: 0 auto 22px; display: flex; flex-direction: column; gap: 10px; }
+.ww-rfilter-row { display: flex; align-items: flex-start; gap: 12px; }
+.ww-rfilter-label { flex: 0 0 92px; padding-top: 6px; font-family: Aeonik, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+.ww-rfilter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ww-rchip { border: 0; cursor: pointer; font: inherit; appearance: none; -webkit-appearance: none; }
+.ww-rchip b { background: #1d272d1f; color: #1d272d; width: auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; font-size: 11px; }
+.ww-rchip:hover { background: #1d272d24; }
+.ww-rchip.is-active { background: #1d272d; color: #fff; }
+.ww-rchip.is-active b { background: #87d581; color: #1d272d; }
+.ww-rchip:focus-visible { outline: 2px solid #87d581; outline-offset: 2px; }
+.ww-rfilter-count { margin: 4px 0 0 104px; font-size: 14px; line-height: 20px; opacity: .7; min-height: 20px; }
+.ww-rmore { max-width: 780px; margin: 22px auto 0; display: flex; justify-content: center; }
+.ww-rmore .fakebutton { padding: 14px 28px; border-radius: 16px; font-size: 16px; }
+.ww-note:focus { outline: none; }
+@media (max-width: 767px) {
+  .ww-rfilter-row { flex-direction: column; gap: 6px; }
+  .ww-rfilter-label { flex-basis: auto; padding-top: 0; }
+  .ww-rfilter-count { margin-left: 0; }
+}
+@media (max-width: 767px) { .ww-research-intro { padding: 18px 20px; font-size: 16px; line-height: 26px; border-radius: 20px; } }
+.ww-note { background: #ecf3f6; border-radius: 24px; padding: 22px 26px; font-family: Aeonik, sans-serif; color: #1d272d; }
+.ww-note-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13px; opacity: .8; margin-bottom: 10px; }
+.ww-note-meta .ww-tag { opacity: 1; text-decoration: none; }
+.ww-note h2 { font-family: Aeonik, sans-serif; font-size: 21px; line-height: 28px; font-weight: 700; margin: 0 0 10px; }
+.ww-note h2 a { color: #1d272d; text-decoration: none; }
+.ww-note h2 a:hover { text-decoration: underline; text-decoration-color: #87d581; }
+.ww-note p { margin: 0 0 10px; font-size: 16px; line-height: 26px; }
+.ww-note-takeaway { background: #fff; border-radius: 14px; padding: 10px 14px; }
+.ww-note-links { font-size: 14px; opacity: .85; }
+.ww-note-links a { color: #1d272d; }
+
+/* ---------- supplements index ---------- */
+.ww-catalog-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 30px; max-width: 1000px; }
+.ww-catalog-nav .ww-tag { text-decoration: none; height: 32px; font-size: 13px; padding: 8px 14px; }
+.ww-catalog-nav .ww-tag b { width: auto; height: auto; background: transparent; color: #1d272d; font-size: 12px; opacity: .6; }
+.ww-catalog-section { max-width: 1200px; margin: 0 auto 40px; font-family: Aeonik, sans-serif; color: #1d272d; }
+.ww-catalog-section h2 { font-family: Aeonik, sans-serif; font-size: 30px; line-height: 36px; font-weight: 500; margin: 0 0 16px; }
+
+/* Home hero: one h1 for the page; the spans keep the original three-block layout. */
+.ww-hero-h1 { display: contents; margin: 0; font-weight: inherit; }
+
+/* The X profile links replace faded placeholder icons; show them at full strength like the other social icons. */
+.ww-x-icon { opacity: 1; }
+
+/* ---------- email capture: thank-you state ---------- */
+.ww-capture form.is-done input, .ww-capture form.is-done button { display: none; }
+.ww-capture-note.is-success { display: flex; align-items: center; gap: 10px; font-size: 16px; line-height: 22px; font-weight: 700; opacity: 1; margin: 0; }
+.ww-capture-note.is-success::before { content: ""; flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: #87d581 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%231d272d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/15px no-repeat; }
+.ww-capture.on-dark .ww-capture-note.is-success { color: #fff; }
+
+/* ---------- phones: slider without arrows, rounded cards; result card product strip swipes sideways ---------- */
+@media (max-width: 767px) {
+  .ww-carousel .ww-arrow { display: none; }
+  .ww-carousel.slider { height: auto; top: 0; margin-bottom: 0; padding-bottom: 0; }
+  .ww-carousel .ww-carousel-mask { height: auto; min-height: 0; margin-top: 16px; }
+  .ww-carousel-item .imagecard { border-radius: 20px; overflow: hidden; }
+  /* supplement page, "Top 5 Available Supplements": the export sizes each card to its product name; make them equal */
+  .gallery-scroll-2 .frame-114 { width: 100%; max-width: none; box-sizing: border-box; }
+  .gallery-scroll-2 .frame-113 { width: 100%; }
+  .gallery-scroll-2 .frame-112 { max-width: none; width: 100%; box-sizing: border-box; }
+  /* the export's three-column block is 100% wide plus 20px of padding, which gave tablets a 10px sideways scroll */
+  ._3-columns { max-width: 100%; box-sizing: border-box; }
+  .ww-card .ww-products { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 12px; overflow-x: auto; margin: 4px -16px 0; padding: 2px 16px 8px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .ww-card .ww-products::-webkit-scrollbar { display: none; }
+  .ww-card .ww-product { flex: 0 0 auto; scroll-snap-align: start; }
+}
+
+/* ---------- result page: share your plan ---------- */
+.resultsclass .ww-share-wrap { max-width: 1020px; margin: 0 auto; padding: 10px; box-sizing: border-box; }
+.ww-share { font-family: Aeonik, sans-serif; color: #fff; background: #2a363d; border-radius: 28px; padding: 24px 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: auto auto auto; gap: 16px 28px; align-items: center; }
+.ww-share-text h3 { margin: 0 0 6px; font-family: Aeonik, sans-serif; font-size: 24px; line-height: 30px; font-weight: 700; color: #fff; }
+.ww-share-text p { margin: 0; font-size: 15px; line-height: 22px; opacity: .8; }
+.ww-share-preview { grid-column: 2; grid-row: 1 / span 3; background: #fff; border-radius: 18px; padding: 6px; }
+.ww-share-preview img { display: block; width: 100%; height: auto; border-radius: 14px; }
+.ww-share-buttons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.ww-share-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; background: #1d272d; color: #fff; border: 0; border-radius: 18px; padding: 12px 6px; font: 700 12px/16px Aeonik, sans-serif; text-decoration: none; cursor: pointer; text-align: center; }
+.ww-share-btn span { display: flex; width: 40px; height: 40px; border-radius: 50%; background: #87d581; color: #1d272d; align-items: center; justify-content: center; }
+.ww-share-btn:hover span { filter: brightness(1.08); }
+.ww-share-btn.is-done span { background: #fff; }
+.ww-share-btn.is-busy { opacity: .6; pointer-events: none; }
+.ww-share-native { display: block; width: 100%; margin: 0; border: 0; background: #87d581; color: #1d272d; border-radius: 16px; padding: 14px; font: 700 16px/20px Aeonik, sans-serif; text-align: center; cursor: pointer; }
+.ww-share-note { margin: 0; font-size: 12px; line-height: 16px; opacity: .6; grid-column: 1; }
+@media (max-width: 767px) {
+  .ww-share { grid-template-columns: minmax(0, 1fr); padding: 18px 16px 20px; gap: 14px; }
+  .ww-share-preview { grid-column: auto; grid-row: auto; }
+  .ww-share-note { grid-column: auto; }
+}
+
+/* ---------- supplement page: "Common Questions" accordion (answers to what people search for) ---------- */
+.ww-qa { grid-row-gap: 0; row-gap: 0; }
+.ww-qa .heading-2 { margin-bottom: 40px; }
+.ww-qa-list { width: 100%; max-width: 1200px; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.ww-qa-item { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.ww-qa-q { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 0; }
+.ww-qa-q::-webkit-details-marker { display: none; }
+.ww-qa-q::marker { content: ''; }
+.ww-qa-q h3 { margin: 0; font-family: Aeonik, sans-serif; font-size: 24px; line-height: 32px; font-weight: 400; color: #fff; }
+.ww-qa-q:hover h3 { color: #87d581; }
+.ww-qa-chevron { flex: 0 0 auto; width: 12px; height: 12px; margin: 0 6px 6px 0; border-right: 2px solid #87d581; border-bottom: 2px solid #87d581; transform: rotate(45deg); transition: transform 0.2s; }
+.ww-qa-item[open] .ww-qa-chevron { transform: rotate(-135deg); margin: 6px 6px 0 0; }
+.ww-qa-a { color: #fff; font-size: 16px; line-height: 30px; max-width: 900px; padding: 0 0 24px; opacity: 0.92; }
+.ww-qa-a p { margin: 0; }
+@media (max-width: 767px) {
+  .ww-qa .heading-2 { margin-bottom: 24px; }
+  .ww-qa-q { padding: 16px 0; gap: 16px; }
+  .ww-qa-q h3 { font-size: 18px; line-height: 26px; }
+  .ww-qa-a { font-size: 15px; line-height: 26px; padding-bottom: 18px; }
+}
+
+/* ---------- mobile menu: site navigation above the social icons (desktop keeps the minimal header) ---------- */
+.ww-nav-links { display: none; }
+@media (max-width: 991px) {
+  .navbar-menu { flex-wrap: wrap; }
+  .ww-nav-links { display: flex; flex-direction: column; width: 100%; order: -1; padding: 6px 10px 0; }
+  .ww-nav-link { font-family: Aeonik, sans-serif; font-size: 22px; line-height: 28px; font-weight: 500; color: #1d272d; text-decoration: none; padding: 14px 0; border-bottom: 1px solid rgba(29, 39, 45, 0.08); }
+  .ww-nav-link:last-child { border-bottom: none; margin-bottom: 6px; }
+  .ww-nav-link:hover, .ww-nav-link:focus-visible { color: #56b06f; }
+}
