@@ -33,6 +33,23 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
 | Transgender Awareness Week | Simple 2-slide carousel (slide 1 works as a static) | 2 |
 | 11/8–14 Trend slot | Empty template only (per instructions) | 1 |
 
+## Round 2 — image variations and enhancements
+
+- **Image variations.** Two extra cover photos (v2, v3) for World Fertility Day, Open Enrollment,
+  NP Week, Fertility Testing, and Transgender Awareness Week. Row-1 variations sit beside the
+  originals; carousel-cover variations sit in a labelled row at the bottom of each section.
+- **Open Enrollment carousel.** Slide counter (01 / 05 …) at the top of every slide, a
+  question-mark icon in place of the "Question N" eyebrow, and a soft top scrim on the photo cover.
+- **Ask a Physician storyboard.** Line icons on every frame (speech bubble, clock, calendar +
+  clipboard + target, two bubbles). The last frame is bolder with a brighter glow and a
+  "Start the conversation" pill. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
+  staggered copy, logo fade) and the four frames are linked as a timed prototype flow.
+- **Fertility Testing carousel.** A continuous numbered step rail runs across the top of all five
+  slides; slide 3 lists the four test areas with icons (cycle, hourglass, anatomy, sperm) and slides
+  2, 4, 5 carry a matching icon (history, checklist, magnifier).
+- **Icons** are drawn in one style (3 px line, rounded caps) and live as editable vectors in each
+  frame.
+
 ## Flags for the client / account team
 
 1. **NP Week needs a real photo.** The brief asks for a team or candid clinic photo. The current
@@ -52,6 +69,10 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
    Testing, Transgender Awareness Week) are AI-generated placeholders made with Figma's image
    generation at 896×1200, so they are slightly upscaled to 1080×1350. Swap for licensed stock or
    client photography if preferred; the layers are named "Photo (AI-generated placeholder)".
-6. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
+6. **Added CTA.** The "Start the conversation" pill on the last storyboard frame is not in the
+   content calendar; confirm the wording or remove it.
+7. **Open Enrollment v2 photo** shows the word "SUMMARY" on the booklet (AI artifact). Fine as a
+   variation, but retouch or swap if it is the pick.
+8. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
    photography library, and confirmation of Lora as the brand typeface would make future batches
    faster and more consistent.
