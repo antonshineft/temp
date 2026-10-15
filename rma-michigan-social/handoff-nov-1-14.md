@@ -40,9 +40,9 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
   originals; carousel-cover variations sit in a labelled row at the bottom of each section.
 - **Open Enrollment carousel.** Slide counter (01 / 05 …) at the top of every slide, a
   question-mark icon in place of the "Question N" eyebrow, and a soft top scrim on the photo cover.
-- **Ask a Physician storyboard.** Line icons on every frame (speech bubble, clock, calendar +
-  clipboard + target, two bubbles). The last frame is bolder with a brighter glow and a
-  "Start the conversation" pill. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
+- **Ask a Physician storyboard.** Line icons on frames 1–3 (speech bubble, clock, calendar +
+  clipboard + target). On the last frame the closing line sits inside a large background speech
+  bubble, with a brighter glow and a "Start the conversation" pill beneath it. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
   staggered copy, logo fade) and the four frames are linked as a timed prototype flow.
 - **Fertility Testing carousel.** A continuous numbered step rail runs across the top of all five
   slides; slide 3 lists the four test areas with icons (cycle, hourglass, anatomy, sperm) and slides
