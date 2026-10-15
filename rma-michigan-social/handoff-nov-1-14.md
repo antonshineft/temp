@@ -42,7 +42,8 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
   question-mark icon in place of the "Question N" eyebrow, and a soft top scrim on the photo cover.
 - **Ask a Physician storyboard.** Line icons on frames 1–3 (speech bubble, clock, calendar +
   clipboard + target). On the last frame the closing line sits inside a large background speech
-  bubble, with a brighter glow and a "Start the conversation" pill beneath it. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
+  bubble with a brighter glow. The logo stays fixed at the bottom of every frame (no fade, same
+  position), including through the transitions in the single-file video. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
   staggered copy, logo fade) and the four frames are linked as a timed prototype flow. A separate
   master frame (to the right of the slides) holds all four on one 13.4 s timeline with crossfade +
   push transitions; export it from Figma (Present → Export video) for a single MP4. Sampled frames
@@ -72,10 +73,8 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
    Testing, Transgender Awareness Week) are AI-generated placeholders made with Figma's image
    generation at 896×1200, so they are slightly upscaled to 1080×1350. Swap for licensed stock or
    client photography if preferred; the layers are named "Photo (AI-generated placeholder)".
-6. **Added CTA.** The "Start the conversation" pill on the last storyboard frame is not in the
-   content calendar; confirm the wording or remove it.
-7. **Open Enrollment v2 photo** shows the word "SUMMARY" on the booklet (AI artifact). Fine as a
+6. **Open Enrollment v2 photo** shows the word "SUMMARY" on the booklet (AI artifact). Fine as a
    variation, but retouch or swap if it is the pick.
-8. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
+7. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
    photography library, and confirmation of Lora as the brand typeface would make future batches
    faster and more consistent.
