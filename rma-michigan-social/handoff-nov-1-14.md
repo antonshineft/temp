@@ -43,7 +43,10 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
 - **Ask a Physician storyboard.** Line icons on frames 1–3 (speech bubble, clock, calendar +
   clipboard + target). On the last frame the closing line sits inside a large background speech
   bubble, with a brighter glow and a "Start the conversation" pill beneath it. Each frame carries a 3 s keyframe animation (glow bloom, icon pop,
-  staggered copy, logo fade) and the four frames are linked as a timed prototype flow.
+  staggered copy, logo fade) and the four frames are linked as a timed prototype flow. A separate
+  master frame (to the right of the slides) holds all four on one 13.4 s timeline with crossfade +
+  push transitions; export it from Figma (Present → Export video) for a single MP4. Sampled frames
+  are in `previews/storyboard-full-video-frames.png`.
 - **Fertility Testing carousel.** A continuous numbered step rail runs across the top of all five
   slides; slide 3 lists the four test areas with icons (cycle, hourglass, anatomy, sperm) and slides
   2, 4, 5 carry a matching icon (history, checklist, magnifier).
