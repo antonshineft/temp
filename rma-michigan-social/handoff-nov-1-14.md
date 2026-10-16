@@ -31,7 +31,7 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
 | National Nurse Practitioner Week | Static, photo cover | 1 |
 | Fertility Testing Isn't Always One Test | Carousel (photo cover + navy slides) | 5 |
 | Transgender Awareness Week | Simple 2-slide carousel (slide 1 works as a static) | 2 |
-| 11/8–14 Trend slot | Empty template only (per instructions) | 1 |
+| 11/8–14 Trend slot — "Fertility Advice That Deserves a Red Card" | Trend carousel (red-card format, typography-forward) | 7 |
 
 ## Round 2 — image variations and enhancements
 
@@ -54,6 +54,14 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
 - **Icons** are drawn in one style (3 px line, rounded caps) and live as editable vectors in each
   frame.
 
+## Trend slot — red-card carousel
+
+Built from the October Trend Slot copy (RMA section only) and placed in the 11/8–14 trend-slot row,
+replacing that week's empty template. Cream editorial background, one misconception per slide set
+on a tilted red card in oversized Lora Bold, clarification beneath in navy, slide counter, small red
+card glyph, and the RMA logo kept small. Copy is verbatim from the doc. Preview:
+`previews/trend-red-card-carousel.png`.
+
 ## Flags for the client / account team
 
 1. **NP Week needs a real photo.** The brief asks for a team or candid clinic photo. The current
@@ -75,6 +83,8 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
    client photography if preferred; the layers are named "Photo (AI-generated placeholder)".
 6. **Open Enrollment v2 photo** shows the word "SUMMARY" on the booklet (AI artifact). Fine as a
    variation, but retouch or swap if it is the pick.
-7. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
+7. **Red-card trend post.** Topics need clinical review before publishing (AMH, IVF pathways,
+   first-test wording). If it belongs in the 11/1–7 slot instead, the row can be moved.
+8. **Brand assets.** RMA has no brand guidelines document. A vector logo file, any approved
    photography library, and confirmation of Lora as the brand typeface would make future batches
    faster and more consistent.
