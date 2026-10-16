@@ -57,10 +57,11 @@ section on the **Sandbox** page, laid out the same way as the existing "KH" sect
 ## Trend slot — red-card carousel
 
 Built from the October Trend Slot copy (RMA section only) and placed in the 11/8–14 trend-slot row,
-replacing that week's empty template. Cream editorial background, one misconception per slide set
-on a tilted red card in oversized Lora Bold, clarification beneath in navy, slide counter, small red
-card glyph, and the RMA logo kept small. Copy is verbatim from the doc. Preview:
-`previews/trend-red-card-carousel.png`.
+replacing that week's empty template. Brand navy background with the glow gradient (same as the
+other carousels), one misconception per slide set on a tilted red card in oversized Lora Bold,
+clarification beneath in white, slide counter, small red-card glyph, and the RMA logo kept small.
+The cover uses an AI-generated photo of a hand holding up a red card on a plain navy background,
+blended into the frame. Copy is verbatim from the doc. Preview: `previews/trend-red-card-carousel.png`.
 
 ## Flags for the client / account team
 
