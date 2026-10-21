@@ -77,6 +77,11 @@ line or stops in the master updates all six slides and keeps the seams aligned.
 
 Preview: `previews/nov15-28-questions-carousel-D-E-F.png`.
 
+**Selected: D — Conversation thread.** Versions A, B, C, E and F (and the E panorama master) were
+deleted from Figma. D now sits in the first row of the Questions block, labelled "Selected", and
+Thanksgiving, the checklist and the trend slot moved up to close the gap. The A–C and D–F preview
+sheets stay in `previews/` as a record of the explorations.
+
 ## Flags for the client / account team
 
 1. **Support-person policy.** Confirm RMA's current visitor/support-person policy before the
@@ -87,11 +92,10 @@ Preview: `previews/nov15-28-questions-carousel-D-E-F.png`.
    graphic reads as an observance post; it is not in the calendar's graphic text and can be removed.
 4. **Thanksgiving tone.** Kept to the calendar line only, with no "Happy Thanksgiving" or feast
    imagery, per the sensitivity note.
-5. **Photography.** All six photos are AI-generated placeholders (Figma image generation,
+5. **Photography.** All photos are AI-generated placeholders (Figma image generation,
    896×1200, slightly upscaled). The cervical-day photo shows a clinician partly in profile; it is a
-   generic scene and is not presented as RMA staff. The five new photos in Questions version F are
-   AI-generated in the same way (objects and scenes only, no faces). Swap for licensed stock or
-   client photography if preferred.
+   generic scene and is not presented as RMA staff. Swap for licensed stock or client photography if
+   preferred. (The selected Questions carousel, version D, uses no photos.)
 6. **Trend slots.** Both are empty templates. The 11/15–21 slot is not explicitly marked "ignore", but
    the calendar says to leave it open until the week of.
 7. **Next step.** Once a direction is picked per post, the chosen frames can move into the
