@@ -60,6 +60,23 @@ Taking notes, Support) and "Check with your care team" are short labels lifted f
 
 Previews: `previews/nov15-28-statics-A-B-C.png`, `previews/nov15-28-questions-carousel-A-B-C.png`.
 
+### Questions You Can Bring — round 2 (D, E, F)
+
+Feedback on A–C was "I need something different… more creative but on-brand", so three new
+directions sit directly under C in the Nov 22–28 section. All copy is the calendar's, verbatim.
+
+| Version | Idea | How it works |
+| --- | --- | --- |
+| D — Conversation thread | The questions are messages the patient sends | Cream wash. Each slide shows the previous question faded above, the current one as a navy bubble, and a "typing" bubble for the next. The last slide is the care team's reply, in a white bubble with the two-ring mark as its avatar. |
+| E — Follow the thread (panorama) | One line runs through all six slides | Navy. On the cover the line draws a question mark, then loops across the swipe, passing numbered stops 01–04 at each question, and ends in the logo's two rings behind the closing line. Questions alternate top/bottom so the line never crosses text. |
+| F — Two circles | The logo's two rings become the layout | Cream wash. A photo circle overlaps an outline circle, alternating sides each slide; the question sits centred beneath. Photos: notebook (cover), results on a tablet, garden path, planner, water and berries, a quiet table by the window. |
+
+Version E is built from one 6480×1350 component, "Version E panorama master", placed to the
+right of the section. Each slide is an instance of it shifted by one slide width, so editing the
+line or stops in the master updates all six slides and keeps the seams aligned.
+
+Preview: `previews/nov15-28-questions-carousel-D-E-F.png`.
+
 ## Flags for the client / account team
 
 1. **Support-person policy.** Confirm RMA's current visitor/support-person policy before the
@@ -72,8 +89,9 @@ Previews: `previews/nov15-28-statics-A-B-C.png`, `previews/nov15-28-questions-ca
    imagery, per the sensitivity note.
 5. **Photography.** All six photos are AI-generated placeholders (Figma image generation,
    896×1200, slightly upscaled). The cervical-day photo shows a clinician partly in profile; it is a
-   generic scene and is not presented as RMA staff. Swap for licensed stock or client photography if
-   preferred.
+   generic scene and is not presented as RMA staff. The five new photos in Questions version F are
+   AI-generated in the same way (objects and scenes only, no faces). Swap for licensed stock or
+   client photography if preferred.
 6. **Trend slots.** Both are empty templates. The 11/15–21 slot is not explicitly marked "ignore", but
    the calendar says to leave it open until the week of.
 7. **Next step.** Once a direction is picked per post, the chosen frames can move into the
