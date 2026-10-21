@@ -39,6 +39,12 @@ word (Figma's native text stagger), and the logo stays fixed at the bottom. No s
 | V2 — Note card (cream) | A note card rises; a question mark draws on; "Check with your care team" is written and ticked; Listening / Taking notes / Support slide in with underlines; lines of information fill the page and a second card slides in beside it. |
 | V3 — Annotated photo | Slow push-in on the waiting-room photo; rings draw around the patient and the partner (dashed with "?" until "yes"); a care-team link, chips pinned to the partner, information dots, and a heart connector between them. |
 
+**Selected: V2 Note card (cream)**, revised per feedback: the "Ask a Physician" eyebrow is removed;
+the opening beat now uses V1's double circles (solid "you" ring with a person, dashed partner ring
+that rotates in, line-drawn sans-serif "?"); in the last beat the card pile scales down and
+re-centers, and the corner double-circle icon is removed. Frames:
+`previews/nov15-28-ask-a-physician-note-card-selected-frames.png`.
+
 The three MP4s (30 fps) were shared directly; sampled frames are in
 `previews/nov15-28-ask-a-physician-motion-infographic-frames.png`. The chip labels (Listening,
 Taking notes, Support) and "Check with your care team" are short labels lifted from the caption copy.
