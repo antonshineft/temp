@@ -40,6 +40,22 @@ calendar's, verbatim.
 Preview: `previews/nov15-28-cervical-thanksgiving-D-E-F.png`. In Figma, the rows below each
 of these posts moved down one row to make room.
 
+### Round 3 — picks and merges
+
+| Post | Status | What changed |
+| --- | --- | --- |
+| World Cervical Cancer Elimination Day | **New G = E + F merged** (to the right of F) | F's navy background, E's calendar page (no rings on top), and a cut-out hand bringing a split teal-and-white ribbon onto the page beside the "17". Title at top, calendar line below the page, logo at the bottom. D, E and F are still in the row. |
+| Thanksgiving | **F selected** | The other versions were removed from Figma. |
+| Before You Choose Your Health Plan | **A kept, photo updated** | New AI desk photo with a jar of granola, a granola bowl and an iced matcha above the checklist card. B and C are unchanged. |
+
+How G is built. The ribbon is the official cervical-cancer colouring: one strand solid teal and the
+other solid white, not a striped ribbon. The hand was generated on plain navy, then cut out by
+removing the navy around it, so it can sit over the calendar page. A soft shadow under the
+cut-out separates the white strand from the white page. The background is a smooth navy plate
+sampled from the same photo, so it matches F.
+
+Preview: `previews/nov15-28-picks-cervical-G-thanksgiving-F-health-A.png`.
+
 ### Ask a Physician — motion infographic (3 versions)
 
 The first round used four static beats with crossfades, which read as a slideshow. It was replaced
@@ -111,16 +127,17 @@ sheets stay in `previews/` as a record of the explorations.
    generic scene and is not presented as RMA staff. Swap for licensed stock or client photography if
    preferred. (The selected Questions carousel, version D, uses no photos.) Round 2 adds three
    more AI photos: the hand with the ribbon (Cervical F), the linen flat lay (Thanksgiving E) and
-   the hand with the leaf (Thanksgiving F). They show hands and objects only, no faces.
+   the hand with the leaf (Thanksgiving F). They show hands and objects only, no faces. Round 3
+   adds the split-ribbon hand used in Cervical G and the granola + matcha desk photo in Health
+   Plan A.
 6. **Trend slots.** Both are empty templates. The 11/15–21 slot is not explicitly marked "ignore", but
    the calendar says to leave it open until the week of.
 7. **Next step.** Once a direction is picked per post, the chosen frames can move into the
    matching sections on the client's "Nov-Dec RMA Content" page.
-8. **Ribbon colour.** The cervical cancer awareness ribbon is teal and white. Cervical F shows it
-   in those colours because it is a real object in a photo; D and E draw it in brand navy and
-   white. Confirm the client is happy with teal appearing in F.
+8. **Ribbon colour.** The cervical cancer awareness ribbon is teal and white; teal on its own is
+   usually read as ovarian cancer. Cervical G uses a split ribbon, one strand teal and one white.
+   F's earlier photo shows a striped ribbon and should not be used. D and E draw the ribbon in
+   brand navy and white.
 9. **Cervical D labels.** "Preventive care" and "Reproductive health" inside the two circles are
    lifted from the calendar line, not separate copy. They can be removed if the client wants the
    circles unlabelled.
-10. **Thanksgiving E logo.** The logo sits small on the note card, like a sign-off, instead of at
-    the bottom of the frame, because the photo has the tea and eucalyptus there.
