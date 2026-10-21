@@ -26,6 +26,20 @@ All three are built from styles already used in the Sept–Oct file, so any of t
 | Ask a Physician: Can I bring someone? (short-form video) | See motion infographic section below | | |
 | 11/15–21 Trend slot | Empty template | | |
 
+### Cervical Day and Thanksgiving — round 2 (D, E, F)
+
+Feedback asked for a more creative but on-brand take on both statics, and to keep the ribbon on
+Cervical Day. Each post has a new row of three directly under its A–C row. All copy is the
+calendar's, verbatim.
+
+| Post | D | E | F |
+| --- | --- | --- | --- |
+| World Cervical Cancer Elimination Day (Nov 17) | **Two circles, one conversation.** Cream. Two navy rings (the logo's motif) labelled "Preventive care" and "Reproductive health"; their overlap is filled navy with a white ribbon in it. | **Calendar page.** Navy. A tear-off page hung from two small rings: "NOVEMBER" band, a large "17" with the ribbon beside it as one mark, the day's name beneath. | **Hand + ribbon.** AI photo of a hand holding a teal-and-white ribbon on navy, in the same style as the red-card trend cover. |
+| Thanksgiving (Nov 26) | **One leaf, a little different.** Cream. A neat grid of outline leaves with one filled and turned the other way; "a little different" set in italic. The leaf is a local component, "Leaf mark". | **Note card on linen.** AI flat-lay photo (linen, autumn leaves, tea, eucalyptus) with a real, editable note card on top carrying the line and a small logo. | **Hand + leaf.** AI photo of a hand holding a single golden leaf on navy, fading into navy at the bottom so the logo sits clear. |
+
+Preview: `previews/nov15-28-cervical-thanksgiving-D-E-F.png`. In Figma, the rows below each
+of these posts moved down one row to make room.
+
 ### Ask a Physician — motion infographic (3 versions)
 
 The first round used four static beats with crossfades, which read as a slideshow. It was replaced
@@ -95,8 +109,18 @@ sheets stay in `previews/` as a record of the explorations.
 5. **Photography.** All photos are AI-generated placeholders (Figma image generation,
    896×1200, slightly upscaled). The cervical-day photo shows a clinician partly in profile; it is a
    generic scene and is not presented as RMA staff. Swap for licensed stock or client photography if
-   preferred. (The selected Questions carousel, version D, uses no photos.)
+   preferred. (The selected Questions carousel, version D, uses no photos.) Round 2 adds three
+   more AI photos: the hand with the ribbon (Cervical F), the linen flat lay (Thanksgiving E) and
+   the hand with the leaf (Thanksgiving F). They show hands and objects only, no faces.
 6. **Trend slots.** Both are empty templates. The 11/15–21 slot is not explicitly marked "ignore", but
    the calendar says to leave it open until the week of.
 7. **Next step.** Once a direction is picked per post, the chosen frames can move into the
    matching sections on the client's "Nov-Dec RMA Content" page.
+8. **Ribbon colour.** The cervical cancer awareness ribbon is teal and white. Cervical F shows it
+   in those colours because it is a real object in a photo; D and E draw it in brand navy and
+   white. Confirm the client is happy with teal appearing in F.
+9. **Cervical D labels.** "Preventive care" and "Reproductive health" inside the two circles are
+   lifted from the calendar line, not separate copy. They can be removed if the client wants the
+   circles unlabelled.
+10. **Thanksgiving E logo.** The logo sits small on the note card, like a sign-off, instead of at
+    the bottom of the frame, because the photo has the tea and eucalyptus there.
