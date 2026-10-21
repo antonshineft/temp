@@ -23,12 +23,25 @@ All three are built from styles already used in the Sept–Oct file, so any of t
 | --- | --- | --- | --- |
 | World Cervical Cancer Elimination Day (static) | Consultation photo | Ribbon icon, title-led | Statement-led, ribbon icon |
 | International Men's Day (static) | Photo of a man by a window | Sperm icon | Two-tone type, italic second line |
-| Ask a Physician: Can I bring someone? (short-form video, 4 beats) | One photo throughout, slow zoom, progress dots | Icons per beat; last beat on two overlapping rings (echoes the logo) | Note card that builds beat by beat |
+| Ask a Physician: Can I bring someone? (short-form video) | See motion infographic section below | | |
 | 11/15–21 Trend slot | Empty template | | |
 
-Each storyboard version also has an **animated master frame** (all four beats on one 13.4 s
-timeline with transitions and a fixed logo). The three exported MP4s were shared directly; sampled
-frames are in `previews/nov15-28-ask-a-physician-video-frames.png`.
+### Ask a Physician — motion infographic (3 versions)
+
+The first round used four static beats with crossfades, which read as a slideshow. It was replaced
+with three continuous motion infographics. Each is a single 1080×1350 frame on one 16 s timeline:
+the stage persists, lines and rings draw on, elements move between states, captions rise in word by
+word (Figma's native text stagger), and the logo stays fixed at the bottom. No slide cuts.
+
+| Version | Concept |
+| --- | --- |
+| V1 — Two rings (navy) | A "you" ring draws on; a dashed partner ring with a "?" rotates in and turns solid ("often, yes"); a care-team badge links to both; Listening / Taking notes / Support chips branch from the partner; information dots stream in and the two rings move together, echoing the logo. |
+| V2 — Note card (cream) | A note card rises; a question mark draws on; "Check with your care team" is written and ticked; Listening / Taking notes / Support slide in with underlines; lines of information fill the page and a second card slides in beside it. |
+| V3 — Annotated photo | Slow push-in on the waiting-room photo; rings draw around the patient and the partner (dashed with "?" until "yes"); a care-team link, chips pinned to the partner, information dots, and a heart connector between them. |
+
+The three MP4s (30 fps) were shared directly; sampled frames are in
+`previews/nov15-28-ask-a-physician-motion-infographic-frames.png`. The chip labels (Listening,
+Taking notes, Support) and "Check with your care team" are short labels lifted from the caption copy.
 
 ## RF November 22–28 (initial feedback 10/30)
 
@@ -39,8 +52,7 @@ frames are in `previews/nov15-28-ask-a-physician-video-frames.png`.
 | Before You Choose Your Health Plan (checklist) | Photo with a white checklist card | Navy, clipboard icon, divided list | Cream, large title, bold checkboxes |
 | 11/22–28 Trend slot | Empty template (per instructions) | | |
 
-Previews: `previews/nov15-28-statics-A-B-C.png`, `previews/nov15-28-ask-a-physician-storyboards-A-B-C.png`,
-`previews/nov15-28-questions-carousel-A-B-C.png`.
+Previews: `previews/nov15-28-statics-A-B-C.png`, `previews/nov15-28-questions-carousel-A-B-C.png`.
 
 ## Flags for the client / account team
 
