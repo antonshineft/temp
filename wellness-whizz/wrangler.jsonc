@@ -1,0 +1,92 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wellness-whizz",
+  "main": "src/index.ts",
+  // Lets the Worker import migrations/0001_init.sql as text (used by the self-installing bootstrap).
+  "rules": [{ "type": "Text", "globs": ["**/*.sql"], "fallthrough": true }],
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist", // built from public/ by scripts/build-assets.mjs (npm run build:assets)
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    // Only these paths run the Worker; everything else is served straight from the static assets.
+    // "/__scheduled" lets `wrangler dev --test-scheduled` reach the cron handler locally.
+    "run_worker_first": ["/", "/es", "/es/*", "/wellness-quiz", "/shelf", "/shelf/*", "/api/*", "/result/*", "/supplement/*", "/images/generated/*", "/how-it-works", "/about", "/terms", "/privacy", "/blog", "/blog/*", "/sitemap.xml", "/robots.txt", "/llms.txt", "/research", "/supplements", "/feed.xml", "/__scheduled"]
+  },
+  // No database_id on purpose: `wrangler deploy` and the "Deploy to Cloudflare" button create the database
+  // automatically and fill it in. Tables and content are created by the Worker itself on first start.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wellness-whizz",
+      "migrations_dir": "migrations","database_id": "1d6f8d51-5f7f-428b-aac2-df480ab13902"
+    }
+  ],
+  "vars": {
+    // Claude answers first whenever ANTHROPIC_API_KEY (secret, paid from the plan's monthly API credits) is set; OpenAI is
+    // the fallback (and the other way round with LLM_PROVIDER=openai). Main: quiz, profiles, articles, FAQs. Fast: research
+    // notes, X posts, Reddit reply drafts. Screen: cheap classification (which Reddit threads to read).
+    "CLAUDE_MODEL": "claude-opus-5-5",
+    "CLAUDE_MODEL_FAST": "claude-sonnet-5-5",
+    "CLAUDE_MODEL_SCREEN": "claude-haiku-5-5",
+    "OPENAI_MODEL": "gpt-4.1-mini",
+    // Inbound mail (Email Routing -> this Worker, src/index.ts email()): every message is forwarded to this verified
+    // destination exactly as the old routing rule did; F5Bot alerts are also parsed into the Reddit digest tables.
+    "MAIL_FORWARD_TO": "hello@shineft.com",
+    "MAIL_FORWARD_ALERTS": "false",
+    // The Reddit digest (src/reddit.ts, 06:52 UTC daily): where it goes, "false" to pause it, how many threads to read
+    // and how many replies to draft.
+    "DIGEST_TO": "shineft@gmail.com",
+    "REDDIT_DIGEST": "true",
+    "REDDIT_MAX_THREADS": "20",
+    "REDDIT_MAX_REPLIES": "6",
+    // Pause between Reddit feed reads in the digest (default 12000); 6 s keeps 20 threads inside a few minutes.
+    "REDDIT_FETCH_GAP_MS": "6000",
+    "ARTICLES_PER_WEEK": "2",
+    // Backlink outreach (src/backlinks.ts): drafted pitches go out from the daily run, up to OUTREACH_PER_DAY a day.
+    "OUTREACH_AUTOSEND": "true",
+    "OUTREACH_PER_DAY": "10",
+    // The owner's Google Sheet of directory submissions (shared "anyone with the link can view"); read daily and on demand.
+    "BACKLINK_SHEET_ID": "1E27Uy2Rhp74I8NPGuZK2H9bIX6nqTdSLsB3HskPmsyg",
+    // Google Search Console property read by src/gsc.ts (the key is the secret GSC_SERVICE_ACCOUNT).
+    "GSC_SITE": "sc-domain:aiww.io",
+    // Days between two inspections of the same page (the search numbers are pulled daily regardless).
+    "GSC_RECHECK_DAYS": "7",
+    // A rendered video is posted through Zernio as soon as it is ready (src/videos.ts); "false" waits for the posting page.
+    "VIDEO_AUTOPOST": "true",
+    "SITE_LANGS": "en,es",
+    "ARTICLE_EFFORT": "high",
+    // iHerb Rewards / referral code, appended to every iherb.com link the site generates.
+    "IHERB_RCODE": "HIN4657",
+    "PRODUCT_SEARCH_URL": "https://www.iherb.com/search?kw={query}",
+    // Abuse controls for the (paid) quiz endpoint: per-IP and global submissions per hour, 0 disables.
+    "RATE_LIMIT_PER_HOUR": "10",
+    "GLOBAL_LIMIT_PER_HOUR": "100",
+    // "false" keeps supplements created by the AI out of the home slider, the Explore list and /api/supplements
+    // (their own pages and result pages still work).
+    "LIST_AI_SUPPLEMENTS": "true",
+    "BACKFILL_BATCH": "6",
+    // The site's one public address: the workers.dev URL and www. redirect to it (src/index.ts).
+    "CANONICAL_HOST": "aiww.io",
+    // X posting: "false" keeps posts queued (visible at /api/admin/social) without sending. 7 = one post a day at
+    // 14:00 UTC (16:00 in Madrid in summer); 1 = Tuesdays only; X_POST_DAYS ("tue,fri") and X_POST_HOUR_UTC override
+    // the days and hour; ALERT_EMAIL (dashboard variable) is where a "post failed" email goes (default: EMAIL_FROM).
+    "X_AUTOPOST": "true",
+    "X_POSTS_PER_WEEK": "7",
+    // Illustrations (OpenAI image model) for supplements without product photos; "false" switches them off.
+    "IMAGE_GENERATION": "false",
+    // IndexNow key (public by design; also the name of public/<key>.txt): new and changed pages are submitted to
+    // Bing, Yandex and the other IndexNow engines every hour (src/indexing.ts). INDEXNOW=false switches it off.
+    "INDEXNOW_KEY": "7545baf5a6ccabc2f974c7a99119aeab"
+    // Optional Cloudflare Turnstile bot protection: add TURNSTILE_SITE_KEY (variable) and TURNSTILE_SECRET_KEY (secret)
+    // in the Cloudflare dashboard under the Worker's Settings -> Variables and Secrets. Both are needed to enable it.
+  },
+  // Every 5 minutes: the article writer (src/content.ts). Hourly: research repair, PubMed check, X posting and the
+  // search-engine pings (src/indexing.ts).
+  // 06:00 UTC daily: the PubMed research run. 07:00 UTC on Mondays ("MON": in Cloudflare cron syntax a numeric day of
+  // week counts from 1 = Sunday, so "1" fired on Sundays): the week's numbers by email (src/report.ts).
+  // 06:52 UTC daily: the Reddit reply digest (src/reddit.ts) from the F5Bot alerts received by the email handler.
+  "triggers": { "crons": ["*/5 * * * *", "0 * * * *", "0 6 * * *", "0 7 * * MON", "52 6 * * *"] },
+  "observability": { "enabled": true }
+}
