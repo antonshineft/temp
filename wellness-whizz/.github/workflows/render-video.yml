@@ -1,0 +1,79 @@
+# Renders the next queued explainer video (see video/render.py and src/videos.ts) and publishes it as a release asset.
+# Runs every three hours; each run asks the site for one job and exits in seconds when there is none.
+# Secrets: WW_STATS_KEY (the site's admin key), ELEVENLABS_API_KEY (the narrator), and one Google route for the clips:
+# GEMINI_API_KEY (Google AI Studio, paid tier) or GOOGLE_VERTEX_PROJECT + GOOGLE_CREDENTIALS_JSON (a Vertex AI service
+# account with the Vertex AI User role; optional variable GOOGLE_GCS_BUCKET for the generated files). Optional: ELEVENLABS_VOICE (voice id, default "Liam"), VIDEO_RESOLUTION
+# (720p or 1080p, default 1080p), VIDEO_MODEL (default gemini-omni-1.1-flash) as repository variables.
+name: Render video
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Article slug to render (default: the oldest scripted job)'
+        required: false
+        default: ''
+      review:
+        description: 'Review run: render and upload the file, but do not report it to the site (nothing is posted)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-video
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: video/requirements.txt
+      - name: Install
+        run: |
+          timeout 180 pip install -q -r video/requirements.txt
+          command -v ffmpeg > /dev/null && ffmpeg -version | head -1 || echo "ffmpeg: the imageio-ffmpeg wheel (no apt)"
+      - name: Sign in to Google Cloud (Vertex AI, only when a service account is configured)
+        id: gcloud
+        env:
+          HAS_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_CREDENTIALS_JSON != '' }}
+        if: env.HAS_SERVICE_ACCOUNT == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+      - name: Render
+        env:
+          WW_ORIGIN: https://aiww.io
+          WW_STATS_KEY: ${{ secrets.WW_STATS_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_VERTEX_PROJECT: ${{ secrets.GOOGLE_VERTEX_PROJECT }}
+          GOOGLE_GCS_BUCKET: ${{ vars.GOOGLE_GCS_BUCKET }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE: ${{ vars.ELEVENLABS_VOICE }}
+          VIDEO_RESOLUTION: ${{ vars.VIDEO_RESOLUTION }}
+          VIDEO_MODEL: ${{ vars.VIDEO_MODEL }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          JOB_SLUG: ${{ github.event.inputs.slug }}
+          RENDER_REVIEW: ${{ github.event.inputs.review == 'true' && '1' || '' }}
+        run: python video/render.py
+      - name: Keep the work files for a week
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-work
+          path: |
+            video/work
+            !video/work/*.wav
+          retention-days: 7
+          if-no-files-found: ignore
