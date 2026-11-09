@@ -6,21 +6,27 @@ were not built). All slide copy is the PDF's graphic text, verbatim.
 Figma: Sandbox page, section "Trend slots — November (RMA)", below the Community & grants section.
 Each post has three rows (A, B, C), one slide per column, 1080×1350.
 
-## The three versions (same system across all three posts)
+## Round 2 — crafted rebuild (replaces round 1)
 
-| Version | Look |
+Feedback: round 1 looked "very AI" (glass panels on a glow, grey placeholder bars, generic icon
+chips, content floating at the top). Everything was rebuilt with an editorial system:
+
+- **Colour:** flat brand navy (#0E3459) or cream (#F6EFE5); no glow, no glass. One accent: soft
+  cream on navy, navy on cream. Amber appears only on caution stickers.
+- **Type:** Lora SemiBold headlines with the key phrase in SemiBold Italic (the accent colour);
+  Lora Regular for body; DM Sans only where something is "interface" (phone UI, small caps labels,
+  the caps news headlines in post 2).
+- **Grid (QA'd on all 57 slides):** 96 px side margins; carousel progress rail at y 96; headline top
+  at y 176; visuals bottom-anchored to y 1060 (or flowing when a slide is text-led); RMA logo
+  200 px wide, centred, y 1140, on every slide. No orphans, nothing clipped.
+- **Versions:** A — Navy. B — Cream. C — Split screen (navy band for the headline; on post 3 the
+  check slides split vertically: navy text panel, light panel for the phone).
+
+| Post | What carries it |
 | --- | --- |
-| A — Navy interface | Navy with the soft glow; interface elements as frosted-glass panels; the key answer or action is a solid white panel. |
-| B — Cream editorial | Cream wash; white cards with a soft shadow; the key answer or action is a solid navy panel. |
-| C — Split screen | A navy band carries the headline (and the question on slide 2); the interface sits below on a pale blue background. |
-
-## Posts
-
-| Post | Slides | Treatment in every version |
-| --- | --- | --- |
-| 1. AI vs. Your Fertility Specialist | 6 | Cover: an "AI" panel versus a "Your Fertility Specialist" panel. Slide 2: the AMH question typed into an AI search bar, with an answer bubble shown as placeholder lines. Slide 3: "AI can help with" panel above the "Your specialist can" panel. Slide 4: 50% as a half-filled ring. Slide 5: the three questions as a checklist. Slide 6: closing line with a small "AI to specialist" motif. |
-| 2. NIH Women's Health Division explainer | 6 | Cover: a subtle egg-cell line illustration and a three-point timeline teaser (no political imagery). Slide 2: date chip and statement with a callout. Slide 3: numbered vertical timeline. Slide 4: "Why does this matter?" panel. Slide 5: research areas as chips. Slide 6: "The bigger picture?" panel. |
-| 3. Before You Believe That Fertility TikTok | 7 | Generic short-video post previews (avatar, video, likes, comments, shares — no platform branding). Checks 1–2 carry a check mark (profile preview; search results with sources); checks 3–5 carry a caution mark on a post preview (with a shopping tag on 4 and a clock on 5). Cover lists the five checks; slide 7 moves from the feed to the care team. |
+| 1. AI vs. Your Fertility Specialist (6) | Cover: one split card, "AI" (typing dots) vs "Your Fertility Specialist", with a "vs" seal. Slide 2: the AMH question as a sent chat bubble, AI "typing" below. Slide 3: frame splits in half — AI can help with (light) / Your specialist can (contrast). Slide 4: **50% shown three ways** — A: a giant "50%" half filled, half outlined; B: ten answer bubbles, five filled; C: one bar split exactly in half. Slide 5: numbered hairline list. Slide 6: closing line with the two-ring mark as a watermark. |
+| 2. NIH Women's Health Division (6) | Cover: headline plus a horizontal timeline (the three milestones from slide 3). Slide 2: date kicker, statement, italic pull quote. Slide 3: vertical timeline with italic milestone heads. Slide 4: "Why does this matter?" contrast panel. Slide 5: numbered hairline list of research areas. Slide 6: "The bigger picture?" closer. |
+| 3. Before You Believe That Fertility TikTok (7) | Realistic phone screens (bezel, status bar, Reels header, right-rail counts, handle + Follow, caption, audio line, tab bar) using three AI stills (creator setup, wellness flat lay, supplement bottle), each with a fact-check sticker: check for checks 1–2, amber caution for 3–5. Check 2 is a search screen whose results are the slide's own phrases (peer-reviewed research, reputable medical organizations, personal anecdotes). Cover lists the five checks beside a phone; slide 7 runs from the feed to the care team. |
 
 Previews: `previews/trend-nov-1-ai-vs-specialist-A-B-C.png`, `previews/trend-nov-2-nih-explainer-A-B-C.png`,
 `previews/trend-nov-3-fertility-tiktok-A-B-C.png`.
@@ -32,14 +38,17 @@ Previews: `previews/trend-nov-1-ai-vs-specialist-A-B-C.png`, `previews/trend-nov
    against the actual sources before publishing. Post 1 slide 4 shows "ASRM 2026 Scientific
    Congress research." as written.
 2. **Post 1, slide 2.** "An example question, specific to fertility, that someone might enter into
-   an AI tool." reads as a note to the designer, so it is not on the graphic. The brief also asks for
-   "a few example fertility questions"; only one is supplied, so only that one is used. The AI's
-   answer is shown as placeholder lines rather than invented text.
-3. **Post 1 labels.** "AI", "Your Fertility Specialist" and "vs" on the cover are taken from the title.
-4. **Post 2, slide 2 wording.** "A new executive order is passed" — executive orders are signed, not
+   an AI tool." reads as a note to the designer, so it is not on the graphic. Only one example
+   question is supplied, so only that one is used; the AI reply is shown as a typing indicator.
+3. **Post 2, slide 2 wording.** "A new executive order is passed" — executive orders are signed, not
    passed (slide 3 says "signed"). Suggest "signed".
-5. **Post 3 platform name.** TikTok is named in the copy only; the interface is a generic feed with
-   no TikTok logo or branding.
-6. **Caution colour.** The caution marks in post 3 use amber, the only colour outside the navy /
-   cream palette, so they read as a warning.
+4. **Post 3 phone screens are mock-ups.** The UI is modelled on Instagram Reels (the post itself is
+   about TikTok; the user asked for "reels"). No platform logos are used. Handles
+   (ttc.notes, wellness.with.you, the.supplement.shelf), captions and counts are invented; captions
+   are deliberately neutral so the post does not repeat any misleading claim. Check the handles do
+   not match real accounts before publishing.
+5. **Photography.** The three phone stills are AI-generated (objects and setting only, no people or
+   faces).
+6. **Caution colour.** Amber is the only colour outside the navy/cream palette, used only on the
+   caution stickers.
 7. **Trend-slot dates.** The PDF does not say which week each concept is for; confirm the slots.
