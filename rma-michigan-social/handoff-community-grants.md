@@ -63,6 +63,11 @@ the three logos above the care-team line and the link.
 
 Preview: `previews/community-grants-B-covers-D-E-F-logos.png`.
 
+## Final carousel (assembled in Figma)
+
+The slides kept in the section are: cover alternative 3 (photo + page), F slides 2–4 (logo-led,
+navy) and D slide 5 (split closing). The other options were removed in Figma.
+
 ## Flags for the client / account team
 
 1. **Slide count.** The brief says "Carousel post — 4 slides" but the graphic text lists five
