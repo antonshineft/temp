@@ -73,6 +73,32 @@ Previews (rows A / B / C):
   - No meaningless decorative circles.
   - The Reels must look real.
 
+### Icons: Lucide (applied to the final picks)
+
+The final picks are on the Sandbox page, beside the "Trend slots — November (RMA)" title. They are:
+
+- AI vs. Specialist: version A.
+- NIH: A cover + C slides 2–6.
+- Fertility TikTok: version B.
+
+Every icon in these picks now uses the official Lucide SVGs (lucide-static v1.72.0, ISC licence). Each kept its size, position and colour. Layers are named `Lucide / <icon>`.
+
+- **Reel screens:**
+  - heart, message-circle, send and music.
+  - shopping-bag on "View product".
+  - clock on "Day 12".
+- **TikTok B slide 3 (search screen):**
+  - search, file-text and user.
+  - The hand-drawn ticks became Lucide `check`.
+  - The hand-drawn strike became a Lucide `x`, with "Personal anecdotes" set in grey with a strikethrough.
+- **AI vs. Specialist A:**
+  - The list ticks on slides 3 and 5 became Lucide `check`.
+  - The AI composer mark on slide 2 became `sparkles`.
+
+The hand-drawn circles and arrows on the TikTok B slides were kept. They point at things in the screenshots rather than act as icons.
+
+Preview: `previews/trend-nov-final-picks-lucide-icons.png`.
+
 ## Flags for the client / account team
 
 1. **Sources.** The PDF lists "Source: URL" without the links. Check these against the real
