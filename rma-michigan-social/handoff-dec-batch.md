@@ -71,27 +71,27 @@ Each version was checked separately on its render:
 | Ask · B | Components: consistent card, distinguished by material. Holds. | The card header continues the November series (it is the note's own header, not an eyebrow). The chips are 5 items, one over the 4-item chunking guide. | No change. The chips are flagged below. |
 | Ask · C | Contrast and single focus hold. | The added series label was an eyebrow. | Label removed. The question leads and "No." dominates. |
 | **Week 7 (checked before building, then on the render)** | | | |
-| Questions · A | Above the fold: the slides should feel continuous, not like separate blocks. | Holds. Text sits on the dark part of each fade. | Built as one notepad photo (AI) panned across the carousel, so each slide continues the last. |
+| Questions · A | Above the fold: the slides should feel continuous, not like separate blocks. | Viewed at full size, the first notepad photo showed AI pseudo-handwriting (gibberish "writing"). | Regenerated with blank pages, then panned across the carousel so each slide continues the last. |
 | Questions · B | Grid: "great" means elements of different sizes share one left track. | Holds. One track for the box column and the text column; slide 5's cursor invites the reader to write. | Built on the shared track. Empty Lucide squares, no ticks, because these are questions to answer. |
 | Questions · C | Grid: the hanging glyph has to align to a track. | First render failed: the enlarged inline "?" collided with the line above, "appointments" split mid-word, and the cover left "ends" alone. | The "?" is now a hanging glyph in its own right-hand column, aligned to the last line. Text resized so every line breaks between words. |
 | Embryology · A | Layout: a full-bleed photo plus a portrait row is fine if the row belongs to the grid. | The first AI lab photo showed brand-like lettering on the microscope. The headline left "see." alone on its last line. | Regenerated an unbranded lab photo (hands only). Headline set in three phrases. The real team sits in a portrait row on the margin grid. |
 | Embryology · B | Section layouts: a headshot grid is a template. | A full-width strip of six tall portraits has its own structure. The names were crowding each other. | Names centred under each column. |
 | Embryology · C | Conventional order (title, body, CTA). | Reversed order on purpose: the credits come first and the statement is the payoff. The credit titles were too small for a phone. | Titles enlarged to 28 px at 85% white. Centred alignment is deliberate here, as end-credits convention. |
 | Myth · A | Section layouts: a diagram passes only if a concept drives it. | Squint test holds: one path on the cover becomes four options, and each slide lights the options it names. | Built as is. Option names are the copy's own words (medication, ovulation induction, IUI, IVF). |
-| Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | The struck "always" varies in strike, tone and weight together. "Not necessarily." answers it at poster size. | Built as is. Structurally unlike the Week 6 Ask a Physician note card, which covers the same subject. |
+| Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | Final review: striking only "always" left "Fertility treatment means IVF." still readable, which is the single-right-treatment implication the brief warns against. | The **whole myth** is struck out at 60%, and "Not necessarily." answers it on slide 2. Structurally unlike the Week 6 Ask a Physician note card. |
 | Myth · C | Layout. | The narrow text column next to the photo strip left "start." alone on the closing slide. | Closing body widened to two balanced lines. The room photo is AI, with no people. |
 | **Week 8** | | | |
 | Holiday · A | Contact-form dimension: the slop is a centred stack of identical blocks. | Holds. Text is left-aligned and split top and bottom around the photo's focal point. | Built with a seasonal still life (AI) with no people, so no AI people stand in for RMA's real team. |
 | Holiday · B | Same dimension: the grid should be the design tool. | The headline left "Little" alone on a line. | Asymmetric two-column grid (headline left, wish and sign-off right) under a dashed slot ready for RMA's real team photo. |
-| Holiday · C | Positioning: "great" uses position as a design tool. | Holds. The logo's two rings hang as ornaments, the only decoration, and they come from the brand mark. | Built as is. Text bottom-left, ornaments top-right. |
-| Office hours · A | Contact-form dimension: rows need a grid, not a centred stack. | Holds. A two-column timetable with ruled rows. | Placeholder rows marked in brackets at 55%. |
+| Holiday · C | Positioning: "great" uses position as a design tool. | Final review: the ring ornaments were decorative circles, which you've asked me to avoid before. | Replaced with two hanging Lucide snowflakes, the only seasonal element. Text bottom-left, ornaments top-right. |
+| Office hours · A | Contact-form dimension: rows need a grid, not a centred stack. | Holds. A two-column timetable with ruled rows. The "Closed" rows weren't bracketed, so they read as real hours. | Every placeholder is bracketed, including "[Closed]", in all three versions. |
 | Office hours · B | Title / body / CTA order. | Holds. A physical door sign gives the stack a real-world reason. | Built as is. |
 | Office hours · C | Contact-form dimension. | The placeholder table was too small for a phone. | Enlarged to 36 px, offset right against the poster title. |
 | Year of Questions · A | Section layouts: numbered slides risk being a template. | Holds. Numbering is allowed because the brief's "three things" is a real sequence. Lists stay as the brief's lists. | Built as is. |
 | Year of Questions · B | Side-tab accent: an open accordion row must not use a coloured edge. | Holds. The open row is a tinted panel with no side border. The closing slide adds "Still Have Questions?" as the open fourth row. | Built as is. |
 | Year of Questions · C | Contrast: small list text has to stay legible. | Holds. Lists are white or ink at 32 px, anchored to the bottom line. | Built as is. |
 | **Week 9** | | | |
-| Carr · A | Footer / final impression: end on a strong anchor. | The date is an object (a calendar page) closing the frame, not a label above the headline. The fact line left "States." alone. | Fact line widened to two lines. The calendar page sits bottom-right as the final anchor. |
+| Carr · A | Footer / final impression: end on a strong anchor. | The date is an object (a calendar page) closing the frame, not a label above the headline. The fact line left "States." alone, and two binding dots sat on top of the page. | Fact line widened to two lines. The dots are removed (no decorative circles). The calendar page sits bottom-right as the final anchor. |
 | Carr · B | Alignments: the slop is a centred column. | Holds. The fact leads top-left and the date closes bottom-right under a rule, so the alignment creates tension. | Built as is. |
 | Carr · C | Same. | The date at poster size ran past the right margin. | Date resized to stay inside the 96 px margin. It still closes the frame, after the sentence. |
 | New Year · A | Layout. | Holds. A snowy path bending out of view (AI, no people) carries "not figured out yet". | Built as is. |
@@ -194,7 +194,15 @@ read.
 10. **IVF Myth and Ask a Physician** both make the "IVF isn't the only option" point, and A Year of Questions slide 4 repeats it. Each uses a different structure so they don't read as reruns. Consider spacing them apart in the calendar.
 11. **Holiday office hours** carry bracketed placeholder rows. Replace them with RMA's confirmed hours before publishing. Per the brief, the graphic does not point patients to the portal for urgent issues.
 12. **Holiday Cheer B** has a dashed slot for a real team or office photo. If RMA can't send one, A or C is the brief's branded fallback.
-13. **Elizabeth Carr** is type-led, with no likeness or photo of her, and no added facts. "1981" stays in the caption, as briefed.
+13. **Copy that isn't the brief's graphic text** (remove any of these if only graphic text should appear):
+    - New Year B: "January 2027", the weekday letters and the day numbers.
+    - IVF Myth A: the option chips on slides 1–2 and the "Evaluation" label (the options are words from the copy).
+    - Questions B: the cover's list of the three questions (repeated from slides 2–4).
+    - A Year of Questions A: the "1 2 3" on the cover.
+    - Nurses B: "RN, IVF Nurse" (from rmami.com).
+    - Embryology: names and titles (from rmami.com).
+13a. **Embryology team:** only Meredith (Senior Embryologist) and Courtney K. (Embryologist) have "Embryologist" in their titles. The others are laboratory supervisor and technologists. RMA should confirm all six belong under "Meet the embryology team."
+13b. **Elizabeth Carr** is type-led, with no likeness or photo of her, and no added facts. "1981" stays in the caption, as briefed.
 14. **Still on hold or waiting on RMA:**
     - Giving Tuesday (resource choice).
     - Universal Health Coverage Day (direction).
