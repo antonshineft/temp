@@ -85,8 +85,16 @@ read.
   interface labels (tag pill, badge role line, note-card header).
 - **Colour:**
   - Navy #003887, deep navy #062D50 and white. Sand #FFF8F1 only on the note card.
-  - **No #F2B489 (peach) anywhere.** On navy, emphasis is full white against 60% white. On white,
-    the highlighter is navy at 16%.
+  - **No #F2B489 (peach) anywhere.** Emphasis comes from type, not colour, and each version has
+    its own device:
+    - Nurses C: weight (Regular headline, Bold key phrase).
+    - Plan C: scale + tone (small lead-in at 60%, key phrase at poster size).
+    - FSA C: weight + tone on "or".
+    - No December frame uses a highlighter.
+  - **Contrast check (craft floor):** small captions moved from grey #787C8A (about 4.2:1, below
+    the 4.5:1 minimum for small text) to ink #3A3A4A and enlarged by 1–2 px. This covers the
+    names on Nurses C1, the badge role lines and the thank-you card names on B5. Text on navy is
+    white, with nothing below 60% opacity on large type.
 - **Icons:** Lucide (lucide-static v1.72.0, ISC licence), in the colour of their surroundings.
   Layers are named `Lucide / <icon>`.
 - **Grid:**
