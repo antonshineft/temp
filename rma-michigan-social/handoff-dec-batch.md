@@ -2,7 +2,7 @@
 
 Source: `RMAMI_December_Social_Graphics_Brief.pdf`. All slide copy is the brief's graphic text,
 used verbatim. The brief says to prioritise what can be done in the next two weeks, so the first
-two posting weeks (Nov 29 – Dec 12) were built first, then Weeks 7 and 8. Week 9 comes next.
+two posting weeks (Nov 29 – Dec 12) were built first, then Weeks 7, 8 and 9. Every asset that isn't on hold is built.
 
 Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684).
 
@@ -30,7 +30,9 @@ Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684)
 | | 2. Holiday Office Reminder (static) | A / B / C built with **clearly marked placeholder hours** |
 | | 3. A Year of Questions Answered (5-slide carousel) | A / B / C built |
 | | 4. Trend slot | Placeholder (template) |
-| 9 (Dec 27–30) | Elizabeth Carr, Heading Into a New Year, 2027 consultation | Next. Week heading is already on the page. |
+| 9 (Dec 27–30) | 1. Elizabeth Carr's Birthday (Dec 28, static) | A / B / C built (type-led, no likeness) |
+| | 2. Heading Into a New Year (static) | A / B / C built |
+| | 3. 2027 Consultation Reminder (static) | A / B / C built (no button) |
 
 Previews:
 - `previews/dec-w5-fsa-hsa-blog-A-B-C.png`
@@ -43,6 +45,9 @@ Previews:
 - `previews/dec-w8-holiday-cheer-A-B-C.png`
 - `previews/dec-w8-office-hours-A-B-C.png`
 - `previews/dec-w8-year-of-questions-A-B-C.png`
+- `previews/dec-w9-elizabeth-carr-A-B-C.png`
+- `previews/dec-w9-new-year-A-B-C.png`
+- `previews/dec-w9-2027-consultation-A-B-C.png`
 
 ## Per-version pass: Taste Engine + Impeccable on every version
 
@@ -85,6 +90,16 @@ Each version was checked separately on its render:
 | Year of Questions · A | Section layouts: numbered slides risk being a template. | Holds. Numbering is allowed because the brief's "three things" is a real sequence. Lists stay as the brief's lists. | Built as is. |
 | Year of Questions · B | Side-tab accent: an open accordion row must not use a coloured edge. | Holds. The open row is a tinted panel with no side border. The closing slide adds "Still Have Questions?" as the open fourth row. | Built as is. |
 | Year of Questions · C | Contrast: small list text has to stay legible. | Holds. Lists are white or ink at 32 px, anchored to the bottom line. | Built as is. |
+| **Week 9** | | | |
+| Carr · A | Footer / final impression: end on a strong anchor. | The date is an object (a calendar page) closing the frame, not a label above the headline. The fact line left "States." alone. | Fact line widened to two lines. The calendar page sits bottom-right as the final anchor. |
+| Carr · B | Alignments: the slop is a centred column. | Holds. The fact leads top-left and the date closes bottom-right under a rule, so the alignment creates tension. | Built as is. |
+| Carr · C | Same. | The date at poster size ran past the right margin. | Date resized to stay inside the 96 px margin. It still closes the frame, after the sentence. |
+| New Year · A | Layout. | Holds. A snowy path bending out of view (AI, no people) carries "not figured out yet". | Built as is. |
+| New Year · B | Newsletter dimension: position as the design tool. | Holds. January 2027 is shown as an empty month: correct day numbers (Jan 1 is a Friday) and nothing filled in. | Built as is. |
+| New Year · C | Typographic play: two dimensions across several words. | Both "January"s use weight + scale. The first render left "here." alone on its last line. | Set in four deliberate lines. |
+| Consultation · A | Layout. | Holds. Two cups at a window imply a conversation without inventing people. | Built as is. |
+| Consultation · B | Contact-form dimension: the grid as a design tool. | The question bubble left "2027?" alone, and the pair sat too high. | Question set in two phrases; the conversation is centred in the space above the logo. No button, per your no-CTA rule. |
+| Consultation · C | Typographic play. | Holds. "in 2027?" uses scale, weight and tone against the softer lead-in. | Built as is. |
 
 Taste Engine's brand-asset extraction (2 credits per image) was not run. It extracts a design
 system rather than critiquing a design. It can be run on each version if you want a measured
@@ -179,11 +194,11 @@ read.
 10. **IVF Myth and Ask a Physician** both make the "IVF isn't the only option" point, and A Year of Questions slide 4 repeats it. Each uses a different structure so they don't read as reruns. Consider spacing them apart in the calendar.
 11. **Holiday office hours** carry bracketed placeholder rows. Replace them with RMA's confirmed hours before publishing. Per the brief, the graphic does not point patients to the portal for urgent issues.
 12. **Holiday Cheer B** has a dashed slot for a real team or office photo. If RMA can't send one, A or C is the brief's branded fallback.
-13. **Coming next, and what it needs:**
-   - Embryology: one confirmed RMA-specific detail.
-   - Holiday Cheer: a team or office photo. A branded fallback can be designed without one.
-   - Holiday office hours: confirmed hours and after-hours instructions. Until then the layout
-     will use clearly marked placeholder hours.
-14. **Build kit.** A temporary text layer named "zz build kit (temporary, safe to delete)" sits on
-   the Misc. page. It holds reusable layout code for the rest of December and will be removed
-   when the batch is done.
+13. **Elizabeth Carr** is type-led, with no likeness or photo of her, and no added facts. "1981" stays in the caption, as briefed.
+14. **Still on hold or waiting on RMA:**
+    - Giving Tuesday (resource choice).
+    - Universal Health Coverage Day (direction).
+    - Holiday office hours (confirmed hours).
+    - Holiday Cheer photo (optional).
+    - The five trend slots, which are filled the week of.
+15. **Build kit.** The temporary helper layer on the Misc. page has been removed.
