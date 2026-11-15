@@ -2,7 +2,7 @@
 
 Source: `RMAMI_December_Social_Graphics_Brief.pdf`. All slide copy is the brief's graphic text,
 used verbatim. The brief says to prioritise what can be done in the next two weeks, so the first
-two posting weeks (Nov 29 – Dec 12) were built first, then Week 7. Weeks 8–9 come next.
+two posting weeks (Nov 29 – Dec 12) were built first, then Weeks 7 and 8. Week 9 comes next.
 
 Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684).
 
@@ -26,7 +26,11 @@ Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684)
 | | 2. Meet the Team: Embryology (static) | A / B / C built, using the six lab-team photos from rmami.com |
 | | 3. IVF Myth: Fertility Treatment Always Means IVF (5-slide carousel) | A / B / C built |
 | | 4. Trend slot | Placeholder (template) |
-| 8–9 (Dec 20–30) | Holiday cheer, Office hours, A Year of Questions, Elizabeth Carr, New Year, 2027 consultation | Next. Week headings are already on the page. |
+| 8 (Dec 20–26) | 1. Holiday Cheer from Our RMA Family (static) | A / B / C built. No team photo yet: B is ready for one; A and C are the brief's branded fallback |
+| | 2. Holiday Office Reminder (static) | A / B / C built with **clearly marked placeholder hours** |
+| | 3. A Year of Questions Answered (5-slide carousel) | A / B / C built |
+| | 4. Trend slot | Placeholder (template) |
+| 9 (Dec 27–30) | Elizabeth Carr, Heading Into a New Year, 2027 consultation | Next. Week heading is already on the page. |
 
 Previews:
 - `previews/dec-w5-fsa-hsa-blog-A-B-C.png`
@@ -36,6 +40,9 @@ Previews:
 - `previews/dec-w7-questions-year-end-A-B-C.png`
 - `previews/dec-w7-embryology-A-B-C.png`
 - `previews/dec-w7-ivf-myth-A-B-C.png`
+- `previews/dec-w8-holiday-cheer-A-B-C.png`
+- `previews/dec-w8-office-hours-A-B-C.png`
+- `previews/dec-w8-year-of-questions-A-B-C.png`
 
 ## Per-version pass: Taste Engine + Impeccable on every version
 
@@ -68,6 +75,16 @@ Each version was checked separately on its render:
 | Myth · A | Section layouts: a diagram passes only if a concept drives it. | Squint test holds: one path on the cover becomes four options, and each slide lights the options it names. | Built as is. Option names are the copy's own words (medication, ovulation induction, IUI, IVF). |
 | Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | The struck "always" varies in strike, tone and weight together. "Not necessarily." answers it at poster size. | Built as is. Structurally unlike the Week 6 Ask a Physician note card, which covers the same subject. |
 | Myth · C | Layout. | The narrow text column next to the photo strip left "start." alone on the closing slide. | Closing body widened to two balanced lines. The room photo is AI, with no people. |
+| **Week 8** | | | |
+| Holiday · A | Contact-form dimension: the slop is a centred stack of identical blocks. | Holds. Text is left-aligned and split top and bottom around the photo's focal point. | Built with a seasonal still life (AI) with no people, so no AI people stand in for RMA's real team. |
+| Holiday · B | Same dimension: the grid should be the design tool. | The headline left "Little" alone on a line. | Asymmetric two-column grid (headline left, wish and sign-off right) under a dashed slot ready for RMA's real team photo. |
+| Holiday · C | Positioning: "great" uses position as a design tool. | Holds. The logo's two rings hang as ornaments, the only decoration, and they come from the brand mark. | Built as is. Text bottom-left, ornaments top-right. |
+| Office hours · A | Contact-form dimension: rows need a grid, not a centred stack. | Holds. A two-column timetable with ruled rows. | Placeholder rows marked in brackets at 55%. |
+| Office hours · B | Title / body / CTA order. | Holds. A physical door sign gives the stack a real-world reason. | Built as is. |
+| Office hours · C | Contact-form dimension. | The placeholder table was too small for a phone. | Enlarged to 36 px, offset right against the poster title. |
+| Year of Questions · A | Section layouts: numbered slides risk being a template. | Holds. Numbering is allowed because the brief's "three things" is a real sequence. Lists stay as the brief's lists. | Built as is. |
+| Year of Questions · B | Side-tab accent: an open accordion row must not use a coloured edge. | Holds. The open row is a tinted panel with no side border. The closing slide adds "Still Have Questions?" as the open fourth row. | Built as is. |
+| Year of Questions · C | Contrast: small list text has to stay legible. | Holds. Lists are white or ink at 32 px, anchored to the bottom line. | Built as is. |
 
 Taste Engine's brand-asset extraction (2 credits per image) was not run. It extracts a design
 system rather than critiquing a design. It can be run on each version if you want a measured
@@ -160,11 +177,13 @@ read.
    - The brief asks for one RMA-specific detail. A candidate from the site, for RMA to confirm before use: Meredith (Senior Embryologist) has worked at RMA for 13 years.
    - The lab photo is AI-generated, hands only.
 10. **IVF Myth and Ask a Physician** both make the "IVF isn't the only option" point, and A Year of Questions slide 4 repeats it. Each uses a different structure so they don't read as reruns. Consider spacing them apart in the calendar.
-11. **Coming next, and what it needs:**
+11. **Holiday office hours** carry bracketed placeholder rows. Replace them with RMA's confirmed hours before publishing. Per the brief, the graphic does not point patients to the portal for urgent issues.
+12. **Holiday Cheer B** has a dashed slot for a real team or office photo. If RMA can't send one, A or C is the brief's branded fallback.
+13. **Coming next, and what it needs:**
    - Embryology: one confirmed RMA-specific detail.
    - Holiday Cheer: a team or office photo. A branded fallback can be designed without one.
    - Holiday office hours: confirmed hours and after-hours instructions. Until then the layout
      will use clearly marked placeholder hours.
-12. **Build kit.** A temporary text layer named "zz build kit (temporary, safe to delete)" sits on
+14. **Build kit.** A temporary text layer named "zz build kit (temporary, safe to delete)" sits on
    the Misc. page. It holds reusable layout code for the rest of December and will be removed
    when the batch is done.
