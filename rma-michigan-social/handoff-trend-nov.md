@@ -34,8 +34,10 @@ Rounds 1 and 2 were replaced. This round used two design tools:
   RMA Content"). No italics. DM Sans only inside interface mock-ups.
 - **Colour:**
   - Navy #003887 (client Instagram), deep navy #062D50 (rmami.com) and white.
-  - **Peach #F2B489** is the single accent, taken from rmami.com. It is used only on navy (and as
-    a highlighter on white), where it has contrast.
+  - **Update (Nov 15): peach #F2B489 is no longer used anywhere.** On navy, emphasis is now
+    full white against 60% white; on white, the highlighter is navy at 16%. The rows below,
+    and the November preview PNGs, still show where peach used to be. Every instance has been replaced in Figma, and your
+    final picks never used it.
 - **Grid:**
   - 96 px side margins.
   - Headline top at y 176.
@@ -128,6 +130,5 @@ Preview: `previews/trend-nov-final-picks-lucide-icons.png`.
      figures only, with no identifiable faces.
    - The three Reel stills (creator setup, wellness flat lay, supplement bottle) show objects
      only.
-7. **Peach accent.** Peach #F2B489 is from rmami.com but is not yet on the Instagram feed.
-   Confirm it is welcome there, or swap it for white.
+7. **Peach accent. Resolved:** do not use #F2B489 at all. It has been removed from every frame.
 8. **Trend-slot dates.** The PDF does not say which week each concept is for. Confirm the slots.
