@@ -2,7 +2,7 @@
 
 Source: `RMAMI_December_Social_Graphics_Brief.pdf`. All slide copy is the brief's graphic text,
 used verbatim. The brief says to prioritise what can be done in the next two weeks, so the first
-two posting weeks (Nov 29 – Dec 12) are built first. Weeks 7–9 come next.
+two posting weeks (Nov 29 – Dec 12) were built first, then Week 7. Weeks 8–9 come next.
 
 Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684).
 
@@ -22,13 +22,20 @@ Figma: Sandbox page, title "December batch — RMA of Michigan" (node 316:15684)
 | | 2. Your Treatment Plan Can Change (5-slide carousel) | A / B / C built |
 | | 3. Ask a Physician: Is IVF the Only Fertility Treatment? | A / B / C built |
 | | 4. Trend slot | Placeholder (template) |
-| 7–9 (Dec 13–30) | Year-end questions, Embryology, IVF myth, Holiday cheer, Office hours, A Year of Questions, Elizabeth Carr, New Year, 2027 consultation | Next. Week headings are already on the page. |
+| 7 (Dec 13–19) | 1. Questions to Ask Before the Year Ends (5-slide carousel) | A / B / C built |
+| | 2. Meet the Team: Embryology (static) | A / B / C built, using the six lab-team photos from rmami.com |
+| | 3. IVF Myth: Fertility Treatment Always Means IVF (5-slide carousel) | A / B / C built |
+| | 4. Trend slot | Placeholder (template) |
+| 8–9 (Dec 20–30) | Holiday cheer, Office hours, A Year of Questions, Elizabeth Carr, New Year, 2027 consultation | Next. Week headings are already on the page. |
 
 Previews:
 - `previews/dec-w5-fsa-hsa-blog-A-B-C.png`
 - `previews/dec-w5-ivf-nurses-A-B-C.png`
 - `previews/dec-w6-treatment-plan-A-B-C.png`
 - `previews/dec-w6-ask-a-physician-ivf-A-B-C.png`
+- `previews/dec-w7-questions-year-end-A-B-C.png`
+- `previews/dec-w7-embryology-A-B-C.png`
+- `previews/dec-w7-ivf-myth-A-B-C.png`
 
 ## Per-version pass: Taste Engine + Impeccable on every version
 
@@ -51,6 +58,16 @@ Each version was checked separately on its render:
 | Ask · A | Section transition: a hard break between the photo and the navy. | "Ask a Physician" isn't in the graphic text, so it was an added eyebrow. | Label removed. The photo now fades into the navy answer area. |
 | Ask · B | Components: consistent card, distinguished by material. Holds. | The card header continues the November series (it is the note's own header, not an eyebrow). The chips are 5 items, one over the 4-item chunking guide. | No change. The chips are flagged below. |
 | Ask · C | Contrast and single focus hold. | The added series label was an eyebrow. | Label removed. The question leads and "No." dominates. |
+| **Week 7 (checked before building, then on the render)** | | | |
+| Questions · A | Above the fold: the slides should feel continuous, not like separate blocks. | Holds. Text sits on the dark part of each fade. | Built as one notepad photo (AI) panned across the carousel, so each slide continues the last. |
+| Questions · B | Grid: "great" means elements of different sizes share one left track. | Holds. One track for the box column and the text column; slide 5's cursor invites the reader to write. | Built on the shared track. Empty Lucide squares, no ticks, because these are questions to answer. |
+| Questions · C | Grid: the hanging glyph has to align to a track. | First render failed: the enlarged inline "?" collided with the line above, "appointments" split mid-word, and the cover left "ends" alone. | The "?" is now a hanging glyph in its own right-hand column, aligned to the last line. Text resized so every line breaks between words. |
+| Embryology · A | Layout: a full-bleed photo plus a portrait row is fine if the row belongs to the grid. | The first AI lab photo showed brand-like lettering on the microscope. The headline left "see." alone on its last line. | Regenerated an unbranded lab photo (hands only). Headline set in three phrases. The real team sits in a portrait row on the margin grid. |
+| Embryology · B | Section layouts: a headshot grid is a template. | A full-width strip of six tall portraits has its own structure. The names were crowding each other. | Names centred under each column. |
+| Embryology · C | Conventional order (title, body, CTA). | Reversed order on purpose: the credits come first and the statement is the payoff. The credit titles were too small for a phone. | Titles enlarged to 28 px at 85% white. Centred alignment is deliberate here, as end-credits convention. |
+| Myth · A | Section layouts: a diagram passes only if a concept drives it. | Squint test holds: one path on the cover becomes four options, and each slide lights the options it names. | Built as is. Option names are the copy's own words (medication, ovulation induction, IUI, IVF). |
+| Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | The struck "always" varies in strike, tone and weight together. "Not necessarily." answers it at poster size. | Built as is. Structurally unlike the Week 6 Ask a Physician note card, which covers the same subject. |
+| Myth · C | Layout. | The narrow text column next to the photo strip left "start." alone on the closing slide. | Closing body widened to two balanced lines. The room photo is AI, with no people. |
 
 Taste Engine's brand-asset extraction (2 credits per image) was not run. It extracts a design
 system rather than critiquing a design. It can be run on each version if you want a measured
@@ -137,11 +154,17 @@ read.
    - Consultation (hands only; an earlier take with a blurred face was discarded).
 8. **On hold, per the brief:** Giving Tuesday (resource not chosen yet) and Universal Health
    Coverage Day (direction not confirmed). Placeholders hold the brief's graphic text.
-9. **Coming next, and what it needs:**
+9. **Embryology.**
+   - Names, titles and photos come from rmami.com's lab-team page.
+   - Brittany's photo is only 500×500 on the site; ask RMA for a higher-resolution file.
+   - The brief asks for one RMA-specific detail. A candidate from the site, for RMA to confirm before use: Meredith (Senior Embryologist) has worked at RMA for 13 years.
+   - The lab photo is AI-generated, hands only.
+10. **IVF Myth and Ask a Physician** both make the "IVF isn't the only option" point, and A Year of Questions slide 4 repeats it. Each uses a different structure so they don't read as reruns. Consider spacing them apart in the calendar.
+11. **Coming next, and what it needs:**
    - Embryology: one confirmed RMA-specific detail.
    - Holiday Cheer: a team or office photo. A branded fallback can be designed without one.
    - Holiday office hours: confirmed hours and after-hours instructions. Until then the layout
      will use clearly marked placeholder hours.
-10. **Build kit.** A temporary text layer named "zz build kit (temporary, safe to delete)" sits on
+12. **Build kit.** A temporary text layer named "zz build kit (temporary, safe to delete)" sits on
    the Misc. page. It holds reusable layout code for the rest of December and will be removed
    when the batch is done.
