@@ -42,11 +42,13 @@ Previews:
 - `previews/dec-w7-questions-year-end-A-B-C.png`
 - `previews/dec-w7-embryology-A-B-C.png`
 - `previews/dec-w7-embryology-D-E-F.png`
+- `previews/dec-w7-embryology-G-H-I.png`
 - `previews/dec-w7-ivf-myth-A-B-C.png`
 - `previews/dec-w8-holiday-cheer-A-B-C.png`
 - `previews/dec-w8-office-hours-A-B-C.png`
 - `previews/dec-w8-year-of-questions-A-B-C.png`
 - `previews/dec-w9-elizabeth-carr-A-B-C.png`
+- `previews/dec-w9-elizabeth-carr-D-E-F.png`
 - `previews/dec-w9-new-year-A-B-C.png`
 - `previews/dec-w9-new-year-calendar-B-B1-B3.png`
 - `previews/dec-w9-2027-consultation-A-B-C.png`
@@ -82,6 +84,9 @@ Each version was checked separately on its render:
 | Embryology · D (added Nov 16, your request: the photos in A–C were too small or too tightly cropped) | Section layouts: a grid of headshots is a template unless an idea drives it. | Split: the statement holds a navy column and the six people form a 2×3 wall beside it. Photos are 324×360, nearly the full head-and-shoulders frame. The headline first left "see." alone, and "Lead Laboratory Technologist" wrapped out of its tile. | Headline re-broken into four phrases. "Meet the embryology team." anchors the foot of the column. Titles kept to one line. |
 | Embryology · E (added) | Same. | The team surrounds the statement: three people above, a navy statement band, three below. Full 360 px square photos, untrimmed. | Built as is. Names and titles sit on each photo. |
 | Embryology · F (added, 2 slides) | Same. | The reveal: slide 1 is the lab "you may never see" (AI, hands only), and the swipe shows the people. The brief allows a "short-form lab explainer". | Built as is. The team is a 3×2 grid of full 280 px photos, with names and titles below. |
+| Embryology · G (added Nov 16, your request: the team tiles as a shaded background image, headline on top) | Section transition: "great" means the photo flows into the next area with no visible break. | Six full 360 px portraits fade down into navy, with the headline in the fade. The first render had a hard edge where the photos ended and left "see." alone on its last line. | The gradient is fully opaque at the photo edge, so it reads as one image. Headline set in three phrases, with the six names as a credit line. |
+| Embryology · H (added) | Section layouts: an idea has to drive the structure. | Emerging: the headline sits in the dark at the top, and the people come into view below ("you may never see" becomes seeing them). The first render showed hard edges at the top and bottom of the photos. | The gradient now covers both photo edges. The logo sits on navy below the faded bottom row. |
+| Embryology · I (added) | Same. | Holds. The whole post is a portrait mosaic (2×3 tiles at 540×450, near-full frames), darkened, with the words literally in front of the team. | Built as is. Names run as a credit line under the title. |
 | Myth · A | Section layouts: a diagram passes only if a concept drives it. | Squint test holds: one path on the cover becomes four options, and each slide lights the options it names. | Built as is. Option names are the copy's own words (medication, ovulation induction, IUI, IVF). |
 | Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | Final review: striking only "always" left "Fertility treatment means IVF." still readable, which is the single-right-treatment implication the brief warns against. | The **whole myth** is struck out at 60%, and "Not necessarily." answers it on slide 2. Structurally unlike the Week 6 Ask a Physician note card. |
 | Myth · C | Layout. | The narrow text column next to the photo strip left "start." alone on the closing slide. | Closing body widened to two balanced lines. The room photo is AI, with no people. |
@@ -99,6 +104,9 @@ Each version was checked separately on its render:
 | Carr · A | Footer / final impression: end on a strong anchor. | The date is an object (a calendar page) closing the frame, not a label above the headline. The fact line left "States." alone, and two binding dots sat on top of the page. | Fact line widened to two lines. The dots are removed (no decorative circles). The calendar page sits bottom-right as the final anchor. |
 | Carr · B | Alignments: the slop is a centred column. | Holds. The fact leads top-left and the date closes bottom-right under a rule, so the alignment creates tension. | Built as is. |
 | Carr · C | Same. | The date at poster size ran past the right margin. | Date resized to stay inside the 96 px margin. It still closes the frame, after the sentence. |
+| Carr · D (added Nov 16, your request: three more versions) | Newsletter dimension: use position as the design tool. | A news clipping, slightly rotated and placed off-centre, with the date as its dateline at the bottom. There was a dead band between the story and the dateline. | Card tightened to its content and recentred in the space above the logo. |
+| Carr · E (added) | Same. | Holds. A giant outlined "28" bleeds off the right edge behind the words. The date object stays behind, and the "December 28" line closes the text. | Built as is. Type only, no likeness. |
+| Carr · F (added) | Typographic play: two dimensions across several words. | Holds. "the first baby born through IVF" is set Bold and larger as a whole phrase; the rest stays Regular. "December 28" closes the frame. | Built as is. |
 | New Year · A | Layout. | Holds. A snowy path bending out of view (AI, no people) carries "not figured out yet". | Built as is. |
 | New Year · B | Newsletter dimension: position as the design tool. | Holds. January 2027 is shown as an empty month: correct day numbers (Jan 1 is a Friday) and nothing filled in. | Built as is. |
 | New Year · B1 (added Nov 16, your request: more calendar variations) | Side-tab accent: event chips must not use a coloured edge. | App month view: a calendar-app screen in RMA navy and DM Sans, with no Google logo, colours or type. The leading and trailing days are greyed, and January has nothing booked. The last grid row first ran past the card. | Rows tightened so the grid sits inside the card. |
