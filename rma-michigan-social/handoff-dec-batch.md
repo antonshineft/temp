@@ -41,6 +41,7 @@ Previews:
 - `previews/dec-w6-ask-a-physician-ivf-A-B-C.png`
 - `previews/dec-w7-questions-year-end-A-B-C.png`
 - `previews/dec-w7-embryology-A-B-C.png`
+- `previews/dec-w7-embryology-D-E-F.png`
 - `previews/dec-w7-ivf-myth-A-B-C.png`
 - `previews/dec-w8-holiday-cheer-A-B-C.png`
 - `previews/dec-w8-office-hours-A-B-C.png`
@@ -77,6 +78,9 @@ Each version was checked separately on its render:
 | Embryology · A | Layout: a full-bleed photo plus a portrait row is fine if the row belongs to the grid. | The first AI lab photo showed brand-like lettering on the microscope. The headline left "see." alone on its last line. | Regenerated an unbranded lab photo (hands only). Headline set in three phrases. The real team sits in a portrait row on the margin grid. |
 | Embryology · B | Section layouts: a headshot grid is a template. | A full-width strip of six tall portraits has its own structure. The names were crowding each other. | Names centred under each column. |
 | Embryology · C | Conventional order (title, body, CTA). | Reversed order on purpose: the credits come first and the statement is the payoff. The credit titles were too small for a phone. | Titles enlarged to 28 px at 85% white. Centred alignment is deliberate here, as end-credits convention. |
+| Embryology · D (added Nov 16, your request: the photos in A–C were too small or too tightly cropped) | Section layouts: a grid of headshots is a template unless an idea drives it. | Split: the statement holds a navy column and the six people form a 2×3 wall beside it. Photos are 324×360, nearly the full head-and-shoulders frame. The headline first left "see." alone, and "Lead Laboratory Technologist" wrapped out of its tile. | Headline re-broken into four phrases. "Meet the embryology team." anchors the foot of the column. Titles kept to one line. |
+| Embryology · E (added) | Same. | The team surrounds the statement: three people above, a navy statement band, three below. Full 360 px square photos, untrimmed. | Built as is. Names and titles sit on each photo. |
+| Embryology · F (added, 2 slides) | Same. | The reveal: slide 1 is the lab "you may never see" (AI, hands only), and the swipe shows the people. The brief allows a "short-form lab explainer". | Built as is. The team is a 3×2 grid of full 280 px photos, with names and titles below. |
 | Myth · A | Section layouts: a diagram passes only if a concept drives it. | Squint test holds: one path on the cover becomes four options, and each slide lights the options it names. | Built as is. Option names are the copy's own words (medication, ovulation induction, IUI, IVF). |
 | Myth · B | Typographic play: a single-word strike is slop unless it varies on two dimensions. | Final review: striking only "always" left "Fertility treatment means IVF." still readable, which is the single-right-treatment implication the brief warns against. | The **whole myth** is struck out at 60%, and "Not necessarily." answers it on slide 2. Structurally unlike the Week 6 Ask a Physician note card. |
 | Myth · C | Layout. | The narrow text column next to the photo strip left "start." alone on the closing slide. | Closing body widened to two balanced lines. The room photo is AI, with no people. |
