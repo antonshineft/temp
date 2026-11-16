@@ -48,6 +48,7 @@ Previews:
 - `previews/dec-w8-year-of-questions-A-B-C.png`
 - `previews/dec-w9-elizabeth-carr-A-B-C.png`
 - `previews/dec-w9-new-year-A-B-C.png`
+- `previews/dec-w9-new-year-calendar-B-B1-B3.png`
 - `previews/dec-w9-2027-consultation-A-B-C.png`
 
 ## Per-version pass: Taste Engine + Impeccable on every version
@@ -100,6 +101,9 @@ Each version was checked separately on its render:
 | Carr · C | Same. | The date at poster size ran past the right margin. | Date resized to stay inside the 96 px margin. It still closes the frame, after the sentence. |
 | New Year · A | Layout. | Holds. A snowy path bending out of view (AI, no people) carries "not figured out yet". | Built as is. |
 | New Year · B | Newsletter dimension: position as the design tool. | Holds. January 2027 is shown as an empty month: correct day numbers (Jan 1 is a Friday) and nothing filled in. | Built as is. |
+| New Year · B1 (added Nov 16, your request: more calendar variations) | Side-tab accent: event chips must not use a coloured edge. | App month view: a calendar-app screen in RMA navy and DM Sans, with no Google logo, colours or type. The leading and trailing days are greyed, and January has nothing booked. The last grid row first ran past the card. | Rows tightened so the grid sits inside the card. |
+| New Year · B2 (added) | Section layouts: the structure has to come from the idea. | The idea is the contrast: Dec 30–31 is packed, then a "January 2027" divider and "No events". It first overflowed into the logo. | Compacted, keeping two January days. Event names are generic, invented and non-medical. |
+| New Year · B3 (added) | Grid: different-sized elements share one left track. | Holds. The week view runs Sun Dec 27 – Sat Jan 2: the December columns are full, a line marks the new year, and Jan 1–2 are open. | Built as is. The hour labels and grid align with the headline's left edge. |
 | New Year · C | Typographic play: two dimensions across several words. | Both "January"s use weight + scale. The first render left "here." alone on its last line. | Set in four deliberate lines. |
 | Consultation · A | Layout. | Holds. Two cups at a window imply a conversation without inventing people. | Built as is. |
 | Consultation · B | Contact-form dimension: the grid as a design tool. | The question bubble left "2027?" alone, and the pair sat too high. | Question set in two phrases; the conversation is centred in the space above the logo. No button, per your no-CTA rule. |
@@ -199,6 +203,7 @@ read.
 11. **Holiday office hours** carry bracketed placeholder rows. Replace them with RMA's confirmed hours before publishing. Per the brief, the graphic does not point patients to the portal for urgent issues.
 12. **Holiday Cheer B** has a dashed slot for a real team or office photo. If RMA can't send one, A or C is the brief's branded fallback.
 13. **Copy that isn't the brief's graphic text** (remove any of these if only graphic text should appear):
+    - New Year B1–B3: invented agenda items ("Year-end report", "Return gifts", "Half day at work" and so on), plus "No events" and the month and day labels. They are generic and non-medical, there to show a busy December.
     - New Year B: "January 2027", the weekday letters and the day numbers.
     - IVF Myth A: the option chips on slides 1–2 and the "Evaluation" label (the options are words from the copy).
     - Questions B: the cover's list of the three questions (repeated from slides 2–4).
