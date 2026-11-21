@@ -1,0 +1,530 @@
+/**
+ * Dose check: how much of a supplement each product pick delivers a day, set against a reference.
+ *
+ *  - Vitamins and minerals are judged against the official adult figures (NIH Office of Dietary Supplements): the
+ *    daily need (RDA, or AI where no RDA exists) and the tolerable upper intake level (UL). These numbers are fixed in
+ *    NUTRIENTS below and never come from a model.
+ *  - Everything else has no official norm, so it is judged against the daily doses used in studies, which the Claude
+ *    API reads from the site's own page about the supplement (and only from there).
+ *  - What a product contains comes from its Supplement Facts label on iHerb, stored in dose_labels by the label
+ *    collector (a script outside the Worker). The Claude API reads the amount of this page's supplement from that
+ *    label; products without a readable label get no verdict.
+ *
+ * The verdict itself is arithmetic, done here. Results live in dose_checks, one row per supplement.
+ */
+import { claudeJson } from './claude';
+import type { Supplement } from './db';
+import { getDoseRef } from './doseref';
+import { STRUCTURES } from './structures';
+import type { VideoEnv } from './videos';
+
+export interface Nutrient {
+  key: string;
+  match: RegExp;
+  unit: 'mg' | 'mcg';
+  /** Adult daily need: the RDA, or the AI where no RDA is set (the higher of the figures for men and women). */
+  need: number;
+  needKind: 'RDA' | 'AI';
+  /** Tolerable upper intake level for adults; null where none has been set. */
+  ceiling: number | null;
+  /** A single-dose size above which absorption is known to fall off. */
+  absorb?: { above: number; note: string };
+  note: string;
+}
+
+export const NUTRIENTS: Nutrient[] = [
+  { key: 'vitamin C', match: /vitamin c\b|ascorb/i, unit: 'mg', need: 90, needKind: 'RDA', ceiling: 2000, absorb: { above: 999, note: 'From a single dose of 1,000 mg or more the body absorbs less than half.' }, note: 'The body absorbs 70 to 90% of vitamin C at 30 to 180 mg a day.' },
+  { key: 'vitamin D', match: /vitamin d\d?\b|cholecalciferol/i, unit: 'mcg', need: 15, needKind: 'RDA', ceiling: 100, note: '1 mcg equals 40 IU, so the ceiling of 100 mcg is 4,000 IU.' },
+  { key: 'vitamin A', match: /vitamin a\b|retin/i, unit: 'mcg', need: 900, needKind: 'RDA', ceiling: 3000, note: 'The ceiling applies to preformed vitamin A (retinol), not to beta-carotene.' },
+  { key: 'vitamin E', match: /vitamin e\b|tocopher/i, unit: 'mg', need: 15, needKind: 'RDA', ceiling: 1000, note: 'The ceiling applies to vitamin E from supplements.' },
+  { key: 'vitamin K', match: /vitamin k\d?\b|menaquinone|phylloquinone/i, unit: 'mcg', need: 120, needKind: 'AI', ceiling: null, note: 'No ceiling has been set for vitamin K.' },
+  { key: 'thiamin', match: /thiamin|vitamin b1\b/i, unit: 'mg', need: 1.2, needKind: 'RDA', ceiling: null, note: 'No ceiling has been set for thiamin.' },
+  { key: 'riboflavin', match: /riboflavin|vitamin b2\b/i, unit: 'mg', need: 1.3, needKind: 'RDA', ceiling: null, note: 'No ceiling has been set for riboflavin.' },
+  { key: 'niacin', match: /niacin|vitamin b3\b|nicotinamide$|niacinamide/i, unit: 'mg', need: 16, needKind: 'RDA', ceiling: 35, note: 'The ceiling of 35 mg is the amount from supplements at which flushing begins.' },
+  { key: 'pantothenic acid', match: /pantothen|vitamin b5\b/i, unit: 'mg', need: 5, needKind: 'AI', ceiling: null, note: 'No ceiling has been set for pantothenic acid.' },
+  { key: 'vitamin B6', match: /vitamin b6\b|pyridox/i, unit: 'mg', need: 1.7, needKind: 'RDA', ceiling: 100, note: 'Long-term intake above the ceiling can damage nerves.' },
+  { key: 'biotin', match: /biotin|vitamin b7\b/i, unit: 'mcg', need: 30, needKind: 'AI', ceiling: null, note: 'No ceiling has been set for biotin. High doses can distort some blood tests.' },
+  // Labels state folate twice: in mcg DFE and, in brackets, as mcg of folic acid itself (1 mcg folic acid = 1.7 mcg DFE).
+  // The ceiling is set in mcg of folic acid, so that is the unit here; the daily need of 400 mcg DFE is 240 mcg of it.
+  { key: 'folate', match: /folate|folic|methylfolate|vitamin b9\b/i, unit: 'mcg', need: 240, needKind: 'RDA', ceiling: 1000, note: 'Amounts are micrograms of folic acid itself, the figure labels give in brackets. 240 mcg of folic acid covers the daily need of 400 mcg DFE; the ceiling of 1,000 mcg applies to folic acid from supplements and fortified food.' },
+  { key: 'vitamin B12', match: /vitamin b12\b|cobalamin/i, unit: 'mcg', need: 2.4, needKind: 'RDA', ceiling: null, note: 'No ceiling has been set. Only a small share of a large dose is absorbed, which is why tablets carry far more than the daily need.' },
+  { key: 'calcium', match: /calcium/i, unit: 'mg', need: 1000, needKind: 'RDA', ceiling: 2500, absorb: { above: 500, note: 'Calcium is absorbed best in single doses of 500 mg or less.' }, note: 'The daily need includes calcium from food.' },
+  { key: 'magnesium', match: /magnesium/i, unit: 'mg', need: 420, needKind: 'RDA', ceiling: 350, note: 'The ceiling of 350 mg counts magnesium from supplements only; above it loose stools are common. Food magnesium does not count.' },
+  { key: 'zinc', match: /zinc/i, unit: 'mg', need: 11, needKind: 'RDA', ceiling: 40, note: 'Long-term intake above the ceiling can lower copper levels.' },
+  { key: 'iron', match: /\biron\b/i, unit: 'mg', need: 18, needKind: 'RDA', ceiling: 45, note: 'The daily need is 18 mg for women aged 19 to 50 and 8 mg for men.' },
+  { key: 'selenium', match: /selenium/i, unit: 'mcg', need: 55, needKind: 'RDA', ceiling: 400, note: '' },
+  { key: 'iodine', match: /iodine|iodide|kelp/i, unit: 'mcg', need: 150, needKind: 'RDA', ceiling: 1100, note: '' },
+  { key: 'copper', match: /copper/i, unit: 'mg', need: 0.9, needKind: 'RDA', ceiling: 10, note: '' },
+  { key: 'manganese', match: /manganese/i, unit: 'mg', need: 2.3, needKind: 'AI', ceiling: 11, note: '' },
+  // No daily need has been set for boron; with the need entered at the ceiling the scale has two zones, as for magnesium.
+  { key: 'boron', match: /boron/i, unit: 'mg', need: 20, needKind: 'AI', ceiling: 20, note: 'No daily need has been set for boron. The ceiling of 20 mg a day is for adults.' },
+  { key: 'chromium', match: /chromium/i, unit: 'mcg', need: 35, needKind: 'AI', ceiling: null, note: 'No ceiling has been set for chromium.' },
+  { key: 'molybdenum', match: /molybdenum/i, unit: 'mcg', need: 45, needKind: 'RDA', ceiling: 2000, note: '' },
+  { key: 'potassium', match: /potassium/i, unit: 'mg', need: 3400, needKind: 'AI', ceiling: null, note: 'No ceiling has been set. Supplements usually carry far less than the daily need, most of which comes from food.' },
+  { key: 'choline', match: /choline/i, unit: 'mg', need: 550, needKind: 'AI', ceiling: 3500, note: '' },
+];
+
+/** The nutrient a supplement page is about, by its name; only for pages in the vitamin and mineral categories. */
+export function nutrientFor(sup: Pick<Supplement, 'name' | 'category'>): Nutrient | null {
+  if (!['Vitamin', 'Mineral'].includes(sup.category) && !/choline$/i.test(sup.name.trim())) return null;
+  // "Alpha-GPC" or "citicoline" are choline donors, not choline itself; "Vitamin D3 and K2" is two nutrients.
+  if (/\band\b|\+|&|complex|multi/i.test(sup.name)) return null;
+  // A name that carries two nutrients ("Zinc Magnesium Aspartate") has no single official figure either.
+  const hits = NUTRIENTS.filter((n) => n.match.test(sup.name));
+  return hits.length === 1 ? hits[0] : null;
+}
+
+/** Picks per supplement page: a two by three grid. */
+export const MAX_PICKS = 6;
+
+export type DoseState = 'within' | 'above' | 'more' | 'over' | 'under' | 'in' | 'beyond' | 'unknown';
+
+export interface DoseProduct {
+  name: string;
+  url: string;
+  /** Amount of this page's supplement in one serving, in the reference unit; null when the label did not say. */
+  amount: number | null;
+  per: string;
+  servings: number;
+  /** amount x servings a day at the label's directions. */
+  daily: number | null;
+  line: string;
+  state: DoseState;
+  /** Other vitamins and minerals in the product that exceed their own ceiling at the label's directions. */
+  also: string[];
+  /** Every vitamin and mineral on the label that has an official ceiling and was set against it (those in `also` included). */
+  checked?: string[];
+}
+
+export interface DoseCheck {
+  slug: string;
+  name: string;
+  basis: 'official' | 'studied';
+  unit: string;
+  /** Official: the daily need. Studied: the low end of the daily doses used in studies. */
+  low: number | null;
+  /** Official: the ceiling (null when none is set). Studied: the high end of the daily doses used in studies. */
+  high: number | null;
+  lowLabel: string;
+  highLabel: string;
+  note: string;
+  source: string;
+  /** Set when the range comes from published research looked up in PubMed and approved (src/doseref.ts). */
+  researched?: boolean;
+  /** What the range measures, as a label states it ("EPA plus DHA"); only with `researched`. */
+  marker?: string;
+  /** The papers the range was read from; only with `researched`. */
+  papers?: { pmid: string; title: string }[];
+  products: DoseProduct[];
+  at: string;
+}
+
+interface LabelRow { url: string; title: string; label: string; directions: string }
+
+const answerSchema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    reference: {
+      type: 'object',
+      additionalProperties: false,
+      description: 'Only for supplements without an official daily need: the range of DAILY doses used in the human studies the page describes. All null when the page gives no dose.',
+      properties: {
+        low: { type: ['number', 'null'], description: 'Lowest daily dose the page reports from studies.' },
+        high: { type: ['number', 'null'], description: 'Highest daily dose the page reports from studies.' },
+        unit: { type: 'string', description: 'mg, g, mcg, IU, or "billion CFU". One unit for low, high and every product amount.' },
+        quote: { type: 'string', description: 'The sentence from the page the range rests on, word for word, at most 200 characters; empty when there is none.' },
+      },
+      required: ['low', 'high', 'unit', 'quote'],
+    },
+    products: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          n: { type: 'integer', description: 'The product number as given.' },
+          amount: { type: ['number', 'null'], description: 'Amount of THIS page\'s supplement in ONE serving, in the reference unit. Null when neither the label nor the product title states it.' },
+          per: { type: 'string', description: 'What one serving is, e.g. "tablet", "2 capsules", "scoop".' },
+          servings_per_day: { type: ['number', 'null'], description: 'Servings a day at the label\'s directions (the lower figure when a range is given); null when the directions do not say.' },
+          line: { type: 'string', description: 'The label line (or title fragment) the amount was read from, word for word; empty when amount is null.' },
+          others: {
+            type: 'array',
+            description: 'Every other vitamin and mineral on the label with its amount per serving, at most thirty. Empty when the label lists none.',
+            items: { type: 'object', additionalProperties: false, properties: { ingredient: { type: 'string' }, amount: { type: 'number' }, unit: { type: 'string', description: 'mg or mcg (convert IU: vitamin D 40 IU = 1 mcg; vitamin A as mcg RAE; folate as the mcg of folic acid given in brackets, never mcg DFE).' } }, required: ['ingredient', 'amount', 'unit'] },
+          },
+        },
+        required: ['n', 'amount', 'per', 'servings_per_day', 'line', 'others'],
+      },
+    },
+  },
+  required: ['reference', 'products'],
+};
+
+const DOSE_SYSTEM = `You read supplement labels for a consumer site. You are given one supplement, the site's own page text about it, and for each product the Supplement Facts label and directions copied from the shop.
+
+Report facts only:
+- For each product, the amount of THIS supplement in one serving, read from the label. If the label lists several forms of it, add them. If the label is missing, use the amount stated in the product title; if neither states it, answer null. Never estimate, never use what you remember about a product.
+- Convert the amount into the reference unit you are told to use. Folate and folic acid: report the micrograms of folic acid (or methylfolate) itself, the figure the label gives in brackets, never the mcg DFE figure. Vitamin D: 40 IU = 1 mcg. Vitamin A: 1 mcg RAE = 3.33 IU retinol. Vitamin E: 1 mg = 1.49 IU natural (d-alpha) or 2.22 IU synthetic (dl-alpha). For minerals use the elemental amount the label states, not the weight of the compound. For botanical extracts use the extract weight.
+- Servings a day come from the directions only. When the directions give a range ("1 to 3 times daily"), report the LOWER figure: the check is about ordinary use, not the maximum.
+- For a supplement without an official daily need, also report the range of daily doses used in human studies, taken ONLY from the page text given. If the page does not state doses, answer null for both.`;
+
+function plain(html: string): string {
+  return html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+}
+
+const round = (v: number) => (v >= 100 ? Math.round(v) : v >= 10 ? Math.round(v * 10) / 10 : Math.round(v * 100) / 100);
+
+/** Convert between the units a label may use and the reference unit; null when they cannot be compared. */
+function toUnit(amount: number, from: string, to: string): number | null {
+  const f = from.trim().toLowerCase().replace('µg', 'mcg').replace('μg', 'mcg');
+  const t = to.trim().toLowerCase();
+  if (f === t) return amount;
+  const mg: Record<string, number> = { g: 1000, mg: 1, mcg: 0.001 };
+  return f in mg && t in mg ? (amount * mg[f]) / mg[t] : null;
+}
+
+function verdict(basis: 'official' | 'studied', low: number | null, high: number | null, amount: number | null, daily: number | null, nutrient: Nutrient | null): DoseState {
+  if (amount === null || daily === null) return 'unknown';
+  if (basis === 'official') {
+    if (high !== null && daily > high) return 'over';
+    if (low !== null && daily <= Math.min(low, high ?? low)) return 'within';
+    return nutrient?.absorb && amount > nutrient.absorb.above ? 'more' : 'above';
+  }
+  if (low === null || high === null) return 'unknown';
+  // A tenth of margin either side: a 450 mg capsule against a 500 mg study dose is the same dose in practice.
+  if (daily < low * 0.9) return 'under';
+  if (daily > high * 1.1) return 'beyond';
+  return 'in';
+}
+
+/** Read the labels of one supplement's picks through the Claude API and store the check. */
+export async function checkSupplement(env: VideoEnv, sup: Supplement): Promise<DoseCheck> {
+  const products = sup.products.slice(0, MAX_PICKS);
+  const nutrient = nutrientFor(sup);
+  const labels = new Map<string, LabelRow>();
+  for (const p of products) {
+    const row = await env.DB.prepare('SELECT url, title, label, directions FROM dose_labels WHERE url = ?').bind(p.url).first<LabelRow>();
+    if (row) labels.set(p.url, row);
+  }
+  const page = plain(`${sup.holistic_html} ${sup.studies_html} ${sup.enhancing_html}`).slice(0, 6000);
+  // A range looked up in published research and approved takes the place of the one read from the page text.
+  const found = nutrient ? null : await getDoseRef(env.DB, sup.slug);
+  const ref = found?.status === 'approved' && found.low !== null && found.high !== null ? found : null;
+  const user = [
+    `Supplement: ${sup.name} (${sup.category})`,
+    nutrient
+      ? `This is a nutrient with an official daily need. Reference unit: ${nutrient.unit}. Leave the reference range null.`
+      : ref
+        ? `This supplement has no official daily need. The reference quantity is ${ref.marker}, in ${ref.unit}. ${ref.labelRule} Report each product's amount of THAT quantity in one serving, and answer null for a product whose label does not state it. Leave the reference range null.`
+        : 'This supplement has no official daily need. Choose one reference unit and report the range of daily doses used in the studies described in the page text.',
+    '',
+    `Page text:\n${nutrient || ref ? '(not needed)' : page}`,
+    '',
+    ...products.map((p, i) => {
+      const l = labels.get(p.url);
+      return `PRODUCT ${i + 1}: ${p.name}${p.brand ? ` (${p.brand})` : ''}\nTitle in the shop: ${l?.title || '(not available)'}\nSupplement Facts:\n${l?.label || '(label not available)'}\nDirections: ${l?.directions || '(not available)'}`;
+    }),
+  ].join('\n');
+  const out = products.length
+    ? await claudeJson<{ reference: { low: number | null; high: number | null; unit: string; quote: string }; products: { n: number; amount: number | null; per: string; servings_per_day: number | null; line: string; others: { ingredient: string; amount: number; unit: string }[] }[] }>(env, DOSE_SYSTEM, user, answerSchema, { tier: 'fast', maxTokens: 9000 })
+    : { reference: { low: null, high: null, unit: '', quote: '' }, products: [] };
+
+  const basis: 'official' | 'studied' = nutrient ? 'official' : 'studied';
+  const unit = nutrient ? nutrient.unit : ref ? ref.unit : String(out.reference?.unit ?? '').trim();
+  const refLow = nutrient ? nutrient.need : ref ? ref.low : out.reference?.low ?? null;
+  const refHigh = nutrient ? nutrient.ceiling : ref ? ref.high : out.reference?.high ?? null;
+  const usable = basis === 'official' || !!ref || (refLow !== null && refHigh !== null && refLow > 0 && refHigh >= refLow && !!unit && !!String(out.reference?.quote ?? '').trim());
+  const check: DoseCheck = {
+    slug: sup.slug,
+    name: sup.name,
+    basis,
+    unit,
+    low: usable ? refLow : null,
+    high: usable ? refHigh : null,
+    lowLabel: nutrient ? `Daily need (${nutrient.needKind})` : 'Lowest daily dose in studies',
+    highLabel: nutrient ? 'Safe ceiling (UL)' : 'Highest daily dose in studies',
+    note: nutrient ? nutrient.note : ref ? `Published trials and reviews gave ${fmt(ref.low as number)} to ${fmt(ref.high as number)} ${ref.unit} of ${ref.marker}${/serving/i.test(ref.marker) ? '' : ' a day'}.` : String(out.reference?.quote ?? '').trim().slice(0, 240),
+    source: nutrient ? 'NIH Office of Dietary Supplements, figures for adults' : ref ? 'Doses used in published trials and reviews' : 'Doses used in the studies described on this page',
+    ...(ref ? { researched: true, marker: ref.marker, papers: [...new Map(ref.evidence.map((e) => [e.pmid, { pmid: e.pmid, title: e.title }])).values()].slice(0, 5) } : {}),
+    products: products.map((p, i) => {
+      const r = (out.products ?? []).find((x) => x.n === i + 1);
+      const amount = r && typeof r.amount === 'number' && r.amount > 0 && String(r.line ?? '').trim() ? round(r.amount) : null;
+      const servings = r && typeof r.servings_per_day === 'number' && r.servings_per_day > 0 && r.servings_per_day <= 12 ? r.servings_per_day : 1;
+      const daily = amount === null ? null : round(amount * servings);
+      const also: string[] = [];
+      const checked: string[] = [];
+      for (const o of r?.others ?? []) {
+        const n = NUTRIENTS.find((x) => x.match.test(o.ingredient));
+        if (!n || n.ceiling === null || (nutrient && n.key === nutrient.key)) continue;
+        const v = toUnit(o.amount, o.unit, n.unit);
+        if (v === null || !(v > 0)) continue;
+        if (!checked.includes(n.key)) checked.push(n.key);
+        if (v * servings > n.ceiling && !also.some((x) => x.startsWith(`${n.key} `))) also.push(`${n.key} ${round(v * servings)} ${n.unit} a day (ceiling ${n.ceiling} ${n.unit})`);
+      }
+      return { name: p.name, url: p.url, amount, per: String(r?.per ?? '').trim().slice(0, 40) || 'serving', servings, daily, line: String(r?.line ?? '').trim().slice(0, 160), state: usable ? verdict(basis, refLow, refHigh, amount, daily, nutrient) : 'unknown', also, checked };
+    }),
+    at: new Date().toISOString(),
+  };
+  await env.DB.prepare("INSERT INTO dose_checks (slug, json, updated_at) VALUES (?, ?, datetime('now')) ON CONFLICT (slug) DO UPDATE SET json = excluded.json, updated_at = excluded.updated_at").bind(sup.slug, JSON.stringify(check)).run();
+  return check;
+}
+
+export async function getDoseCheck(db: D1Database, slug: string): Promise<DoseCheck | null> {
+  try {
+    const row = await db.prepare('SELECT json FROM dose_checks WHERE slug = ?').bind(slug).first<{ json: string }>();
+    return row ? (JSON.parse(row.json) as DoseCheck) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function listDoseChecks(db: D1Database): Promise<DoseCheck[]> {
+  const rows = (await db.prepare('SELECT json FROM dose_checks ORDER BY slug').all<{ json: string }>()).results ?? [];
+  return rows.map((r) => { try { return JSON.parse(r.json) as DoseCheck; } catch { return null; } }).filter((c): c is DoseCheck => !!c);
+}
+
+export async function storeLabels(db: D1Database, items: { url: string; title?: string; label?: string; directions?: string }[]): Promise<number> {
+  let n = 0;
+  for (const i of items.slice(0, 60)) {
+    if (!/^https:\/\/(www\.)?iherb\.(co|com)\//.test(String(i.url))) continue;
+    await db.prepare("INSERT INTO dose_labels (url, title, label, directions, fetched_at) VALUES (?, ?, ?, ?, datetime('now')) ON CONFLICT (url) DO UPDATE SET title = excluded.title, label = excluded.label, directions = excluded.directions, fetched_at = excluded.fetched_at")
+      .bind(String(i.url), String(i.title ?? '').slice(0, 300), String(i.label ?? '').slice(0, 4000), String(i.directions ?? '').slice(0, 800)).run();
+    n += 1;
+  }
+  return n;
+}
+
+// ---------- rendering: one scale per product ----------
+
+const esc = (s: unknown) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const fmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: n >= 100 ? 0 : 2 });
+
+/** Best-dosed first when the picks are ordered: in range, then merely above the need, down to above the ceiling. */
+export const STATE_RANK: Record<DoseState, number> = { in: 0, within: 0, above: 1, under: 2, unknown: 3, more: 4, beyond: 5, over: 6 };
+
+const WORDS: Record<DoseState, { mark: string; cls: string; text: string }> = {
+  within: { mark: '✓', cls: 'ok', text: 'Within the daily need' },
+  above: { mark: 'i', cls: 'info', text: 'Above the daily need, under the safe ceiling' },
+  more: { mark: '!', cls: 'more', text: 'More than your body absorbs' },
+  over: { mark: '✕', cls: 'over', text: 'Above the safe ceiling' },
+  under: { mark: 'i', cls: 'info', text: 'Below the doses used in studies' },
+  in: { mark: '✓', cls: 'ok', text: 'In the range used in studies' },
+  beyond: { mark: '!', cls: 'more', text: 'Above the doses used in studies' },
+  unknown: { mark: '?', cls: 'info', text: 'Dose not confirmed from the label' },
+};
+
+interface Zone { cls: string; label: string; sub: string }
+
+/** The zones of a check's scale and the figures between them. */
+function scaleOf(c: DoseCheck): { zones: Zone[]; edges: number[] } {
+  const low = c.low ?? 0;
+  if (c.basis === 'studied') {
+    return { zones: [{ cls: 'z0', label: 'Below', sub: 'less than studies used' }, { cls: 'z1', label: 'Studied range', sub: 'the doses trials tested' }, { cls: 'z2', label: 'Above', sub: 'more than studies used' }], edges: [low, c.high ?? low] };
+  }
+  if (c.high === null) return { zones: [{ cls: 'z1', label: 'Daily need', sub: 'covers what the body requires' }, { cls: 'z2', label: 'Extra', sub: 'no ceiling has been set' }], edges: [low] };
+  // Magnesium: the ceiling counts supplements only and sits below the daily need, which food mostly covers.
+  if (c.high <= low) return { zones: [{ cls: 'z1', label: 'Within the limit', sub: 'for supplements' }, { cls: 'z3', label: 'Too much', sub: 'above the safe ceiling' }], edges: [c.high] };
+  return { zones: [{ cls: 'z1', label: 'Daily need', sub: 'covers what the body requires' }, { cls: 'z2', label: 'Extra', sub: 'safe, often not all absorbed' }, { cls: 'z3', label: 'Too much', sub: 'above the safe ceiling' }], edges: [low, c.high] };
+}
+
+/** Where a daily amount sits, in percent of the bar: zones are equally wide and the mark moves within its zone. */
+function positionOf(c: DoseCheck, daily: number, state?: DoseState): number {
+  const { zones, edges } = scaleOf(c);
+  const w = 100 / zones.length;
+  let k = edges.findIndex((e) => daily <= e);
+  if (k < 0) k = zones.length - 1;
+  // Studied ranges are judged with a margin (a 450 mg capsule against a 500 mg study dose is in range), so the
+  // mark follows the verdict, never the other way round.
+  if (c.basis === 'studied' && state) k = state === 'under' ? 0 : state === 'beyond' ? 2 : 1;
+  const lower = k === 0 ? 0 : edges[k - 1];
+  const upper = k < edges.length ? edges[k] : null;
+  const frac = upper === null ? Math.min(1, (daily - lower) / (lower || 1)) * 0.8 : (daily - lower) / (upper - lower || 1);
+  return (k + Math.min(0.94, Math.max(0.06, frac))) * w;
+}
+
+export function doseFor(c: DoseCheck | null | undefined, url: string): DoseProduct | null {
+  const p = c?.products.find((x) => x.url === url) ?? null;
+  return c && c.low !== null && p && p.state !== 'unknown' && p.daily !== null ? p : null;
+}
+
+/** Whether a check carries a range to judge picks against (see visibleCheck for which ranges reach a page). */
+export function hasRange(c: DoseCheck | null | undefined): boolean {
+  return !!c && c.low !== null;
+}
+
+/**
+ * The check as a page may show it. Official figures are always shown. A range read from studies is shown only when
+ * `studied` is on and either the range was looked up in published research and approved (src/doseref.ts), which
+ * names the quantity a label must state, or the supplement is a single substance (kind "self" in src/structures.ts:
+ * creatine, melatonin ...), where the studies and the products measure the same thing. For other plants, proteins
+ * and blends a study's extract and a product's whole powder are not comparable, so the picks grey out.
+ */
+export function visibleCheck(c: DoseCheck | null, studied: boolean): DoseCheck | null {
+  if (!c || c.basis === 'official') return c;
+  if (!(studied && c.low !== null && (c.researched || STRUCTURES[c.slug]?.kind === 'self'))) return { ...c, low: null, high: null };
+  // The verdict is arithmetic on stored figures, so it is taken afresh here: a change of the margin needs no new reading.
+  return { ...c, products: c.products.map((p) => ({ ...p, state: verdict('studied', c.low, c.high, p.amount, p.daily, null) })) };
+}
+
+/**
+ * The scale of a pick that has no verdict, greyed out: either the supplement has no official daily need or ceiling,
+ * or it has one and this product's label did not state its amount.
+ */
+export function doseBlank(c: DoseCheck | null | undefined, teaser = false, name = ''): string {
+  const text = hasRange(c) ? 'Dose not confirmed from the label' : 'No official range';
+  const who = c?.name || name;
+  const tip = hasRange(c) && c
+    ? `<span class="ww-dose-tip-src">The label of this product does not state how much ${esc(who)} one serving holds, so it has no place on the scale.</span>${tipFor(c)}`
+    : `<span class="ww-dose-tip-src">No official daily need or safe ceiling has been set for ${esc(who)}, so these picks are not rated by dose. Research on ${esc(who)}: ${researchLink(who)}.</span>`;
+  // On the home slider a card shows the bar alone: no verdict in words, so the card stays a teaser.
+  if (teaser) {
+    return `<div class="ww-dose ww-dose-none ww-dose-teaser" role="img" aria-label="${text}">
+          <div class="ww-dose-bar" style="grid-template-columns:repeat(3,1fr)"><i></i><i></i><i></i></div>
+          <div class="ww-dose-edges"></div>
+        </div>`;
+  }
+  return `<div class="ww-dose ww-dose-none">
+          ${bubbleRow('none', 50, text, tip)}
+          <div class="ww-dose-bar" style="grid-template-columns:repeat(3,1fr)"><i></i><i></i><i></i></div>
+          <div class="ww-dose-edges"></div>
+        </div>`;
+}
+
+/** The underlined word "studies": the research section, opened on this supplement's collection of studies. */
+const researchLink = (name: string, word = 'studies') => `<a href="/research?q=${encodeURIComponent(name)}" class="ww-dose-studies">${word}</a>`;
+
+/** Icons from the Lucide set (lucide.dev, ISC licence), drawn as outlines in the colour of the text around them. */
+const ICON_PATHS = {
+  check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+  x: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  // The same signs without the ring, for the round pin of the home slider.
+  pinCheck: '<path d="M20 6 9 17l-5-5"/>',
+  pinInfo: '<path d="M12 17v-6"/><path d="M12 7h.01"/>',
+  pinAlert: '<path d="M12 7v6"/><path d="M12 17h.01"/>',
+  pinX: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+} as const;
+type IconName = keyof typeof ICON_PATHS;
+const icon = (name: IconName, width = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name]}</svg>`;
+/** A verdict's sign for use outside the scale (brand pages): "ok", "info", "more", "over" or "none". */
+export function verdictIcon(cls: string): string {
+  return icon(SIGN[cls] ?? 'info');
+}
+const SIGN: Record<string, IconName> = { ok: 'check', info: 'info', more: 'alert', over: 'x', none: 'help' };
+const PIN: Record<string, IconName> = { ok: 'pinCheck', info: 'pinInfo', more: 'pinAlert', over: 'pinX' };
+
+/**
+ * The verdict of a pick: a small bubble that points at the pick's place on the bar, with the explanation opening
+ * under it on hover, on keyboard focus and on a tap. `at` is the place on the bar in percent; the bubble is shifted
+ * by the same share of its own width, so it follows the point and still never leaves the card.
+ */
+function bubbleRow(cls: string, at: number, html: string, tip: string): string {
+  const x = Math.min(100, Math.max(0, at)).toFixed(1);
+  return `<div class="ww-dose-bubblerow">
+            <span class="ww-dose-bubble" style="margin-left:${x}%;transform:translateX(-${x}%)" tabindex="0" role="button">${icon(SIGN[cls] ?? 'info')}<span>${html}</span></span>
+            <span class="ww-dose-tail" style="left:${x}%" aria-hidden="true"></span>
+            <span class="ww-dose-tip" role="tooltip">${tip}</span>
+          </div>`;
+}
+
+/** The explanation of a scale: what its zones mean, the note behind the figures and where they come from. */
+function tipFor(c: DoseCheck): string {
+  const { zones } = scaleOf(c);
+  const papers = (c.papers ?? []).map((p) => `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(p.pmid)}/" target="_blank" rel="noopener nofollow" title="${esc(p.title)}">PMID ${esc(p.pmid)}</a>`).join(', ');
+  // The supplement's name closes its own piece of text and the link word follows it, so the Spanish dictionary can
+  // look each piece up whole.
+  const source = c.basis === 'studied'
+    ? `Figures: doses${c.marker ? ` of ${esc(c.marker)}` : ''} used in published research on ${esc(c.name)}: ${researchLink(c.name)}${papers ? ` (${papers})` : ''}. No official daily need or safe ceiling has been set for it; the range is what trials tested, not a recommendation. Zones are not drawn to scale.`
+    : `Figures: ${esc(c.source)}. Research on ${esc(c.name)}: ${researchLink(c.name)}. Zones are not drawn to scale.`;
+  return `${zones.map((z) => `<span class="ww-dose-tip-zone"><b>${z.label}</b> ${z.sub}</span>`).join('')}${c.note ? `<span class="ww-dose-tip-note">${esc(c.note)}</span>` : ''}<span class="ww-dose-tip-src">The scale shows each pick's daily amount at the label's directions. ${source}</span>`;
+}
+
+/**
+ * For a pick that has no single dose to judge (a multivitamin, a blend, a category page): the vitamins and minerals on
+ * its label set against their official ceilings. Null when the label carries none that has a ceiling.
+ */
+export function doseLimits(c: DoseCheck | null | undefined, url: string, teaser = false): string | null {
+  const p = c?.products.find((x) => x.url === url);
+  if (!c || !p || !p.checked?.length) return null;
+  const over = p.also.length > 0;
+  const first = over ? p.also[0].replace(/ \d[\d.,]* (mg|mcg) a day.*$/, '') : '';
+  const text = over ? `${first.charAt(0).toUpperCase()}${first.slice(1)}${p.also.length > 1 ? ` and ${p.also.length - 1} more` : ''} above the safe ceiling` : 'Nothing above its safe ceiling';
+  const tip = teaser ? '' : (
+    `<span class="ww-dose-tip-zone"><b>Within limits</b> every vitamin and mineral checked is under its ceiling</span><span class="ww-dose-tip-zone"><b>Above a limit</b> at least one is over</span>` +
+    `<span class="ww-dose-tip-note">Checked on this label: ${esc(p.checked.join(', '))}.${over ? ` Above its ceiling: ${esc(p.also.join('; '))}.` : ''}</span>` +
+    `<span class="ww-dose-tip-src">This product has several ingredients, so there is no single dose to judge. The check covers the vitamins and minerals that have an official safe ceiling, at the label's directions; herbs and other ingredients are not rated. Figures: NIH Office of Dietary Supplements, figures for adults. Research on ${esc(c.name)}: ${researchLink(c.name)}.</span>`);
+  if (teaser) {
+    return `<div class="ww-dose ww-dose-${over ? 'over' : 'ok'} ww-dose-teaser" role="img" aria-label="${esc(text)}">
+          <div class="ww-dose-bar" style="grid-template-columns:repeat(2,1fr)"><i class="ww-dose-z1"></i><i class="ww-dose-z3"></i><span class="ww-dose-pin" style="left:${over ? 75 : 25}%" aria-hidden="true">${icon(over ? 'pinX' : 'pinCheck', 3)}</span></div>
+          <div class="ww-dose-edges"><span style="left:50.0%">safe ceiling</span></div>
+        </div>`;
+  }
+  return `<div class="ww-dose ww-dose-${over ? 'over' : 'ok'}">
+          ${bubbleRow(over ? 'over' : 'ok', over ? 75 : 25, esc(text), tip)}
+          <div class="ww-dose-bar" style="grid-template-columns:repeat(2,1fr)"><i class="ww-dose-z1"></i><i class="ww-dose-z3"></i><span class="ww-dose-dot" style="left:${over ? 75 : 25}%"></span></div>
+          <div class="ww-dose-edges"><span style="left:50.0%">safe ceiling</span></div>
+        </div>`;
+}
+
+function wordsFor(c: DoseCheck, state: DoseState): { mark: string; cls: string; text: string } {
+  if (state === 'within' && c.basis === 'official' && c.high !== null && c.high <= (c.low ?? 0)) return { ...WORDS.within, text: 'Under the safe ceiling for supplements' };
+  return WORDS[state];
+}
+
+/**
+ * The scale of one product: verdict, a bar with a dot where the pick sits, and the reference figures under it.
+ * `teaser` is the smaller form for the home page slider.
+ */
+export function doseScale(c: DoseCheck, p: DoseProduct, teaser = false): string {
+  const { zones, edges } = scaleOf(c);
+  const w = wordsFor(c, p.state);
+  const at = positionOf(c, p.daily as number, p.state).toFixed(1);
+  const cols = `grid-template-columns:repeat(${zones.length},1fr)`;
+  const bar = zones.map((z) => `<i class="ww-dose-${z.cls}"></i>`).join('');
+  const marks = edges.map((e, i) => `<span style="left:${(((i + 1) * 100) / zones.length).toFixed(1)}%">${fmt(e)} ${esc(c.unit)}</span>`).join('');
+  // The pick's place is a dot on the bar; its amount is stated in the card's own line, and only the reference
+  // figures sit under the ruler.
+  const mark = `<span class="ww-dose-dot" style="left:${at}%" title="${fmt(p.daily as number)} ${esc(c.unit)} a day"></span>`;
+  // The home slider's teaser: the bar and its figures only, with the verdict's sign standing where the pick sits.
+  if (teaser) {
+    return `<div class="ww-dose ww-dose-${w.cls} ww-dose-teaser" role="img" aria-label="${esc(w.text)}: ${fmt(p.daily as number)} ${esc(c.unit)} a day">
+          <div class="ww-dose-bar" style="${cols}">${bar}<span class="ww-dose-pin" style="left:${at}%" aria-hidden="true">${icon(PIN[w.cls] ?? 'pinInfo', 3)}</span></div>
+          <div class="ww-dose-edges">${marks}</div>
+        </div>`;
+  }
+  return `<div class="ww-dose ww-dose-${w.cls}">
+          ${bubbleRow(w.cls, Number(at), esc(w.text).replace(/\bstudies\b/, researchLink(c.name)), tipFor(c))}
+          <div class="ww-dose-bar" style="${cols}">${bar}${mark}</div>
+          <div class="ww-dose-edges">${marks}</div>${!teaser && p.also.length ? `\n          <p class="ww-dose-also"><b>Also check:</b> ${esc(p.also.join('; '))}.</p>` : ''}
+        </div>`;
+}
+
+/** "100 mg per capsule" or "500 mg per tablet, 2 a day", as markup (already escaped). */
+export function doseLine(c: DoseCheck, p: DoseProduct): string {
+  // Each part is its own piece of text, so the Spanish site can look "per", the serving and "a day" up one by one.
+  return `${fmt(p.amount as number)} ${esc(c.unit)} <span>per</span> <span>${esc(p.per)}</span>${p.servings > 1 ? `<span>, ${fmt(p.servings)} a day</span>` : ''}`;
+}
+
+/** The owner's report: every page with a pick outside the comfortable range, worst first. */
+export function doseReport(checks: DoseCheck[]): { pages: number; products: number; unknown: number; counts: Record<string, number>; outliers: { slug: string; name: string; basis: string; product: string; state: DoseState; daily: number | null; unit: string; low: number | null; high: number | null; also: string[] }[]; noReference: string[] } {
+  const counts: Record<string, number> = {};
+  const outliers: ReturnType<typeof doseReport>['outliers'] = [];
+  const noReference: string[] = [];
+  let products = 0;
+  let unknown = 0;
+  for (const c of checks) {
+    if (c.low === null) noReference.push(c.slug);
+    for (const p of c.products) {
+      products += 1;
+      counts[p.state] = (counts[p.state] ?? 0) + 1;
+      if (p.state === 'unknown') unknown += 1;
+      if (['over', 'more', 'beyond', 'under'].includes(p.state) || p.also.length) outliers.push({ slug: c.slug, name: c.name, basis: c.basis, product: p.name, state: p.state, daily: p.daily, unit: c.unit, low: c.low, high: c.high, also: p.also });
+    }
+  }
+  const rank: Record<string, number> = { over: 0, beyond: 1, more: 2, under: 3 };
+  outliers.sort((a, b) => (rank[a.state] ?? 9) - (rank[b.state] ?? 9) || a.slug.localeCompare(b.slug));
+  return { pages: checks.length, products, unknown, counts, outliers, noReference };
+}

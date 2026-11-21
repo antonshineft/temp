@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.dev.vars
+worker-configuration.d.ts
+dist/
+__pycache__/
+
+# Atom positions written by scripts/structures/export3d.py for the 3D renderer (rebuilt on every run)
+scripts/structures/render3d/molecules.json
