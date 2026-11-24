@@ -13,6 +13,21 @@ runs in their own Figma, sees their local fonts, and swaps tagged text to the
 real font. While its panel is open it applies tags on the current page every
 three seconds, with no clicks.
 
+## Prefer an account upload when the user can do one
+
+Figma lets a user upload a font to their own account, after which the server
+has it and `loadFontAsync` works like any built-in font: no plugin, nothing
+open, no stand-in. Steps for the user: Figma file browser → avatar (top left)
+→ **Settings** → **Account** → **Your uploaded fonts** → **Upload fonts**
+(.TTF or .OTF; they confirm they have the rights to store it on Figma).
+
+When a font the design needs is missing server-side and is one the user works
+with regularly, suggest this once, then re-check `listAvailableFontsAsync()`.
+Use the plugin route below for fonts the user has not uploaded, cannot upload
+under their licence, or does not have as a .TTF/.OTF file.
+
+## The plugin protocol
+
 All communication goes through shared plugin data in the `local_fonts`
 namespace. `setSharedPluginData` works in `use_figma`; `setPluginData` does not.
 
